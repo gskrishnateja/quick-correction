@@ -5,6 +5,7 @@
  *   Categories  board > class > subject > chapter > topic
  *   Paper patterns sections, question types and marks per subject
  *   Question bank  every question, tagged to a topic
+ *   Coverage       what the bank should hold against what it does
  *
  * The tab is in the address (`?tab=`), so links and the back button work. Other
  * parameters belong to the tab (for example `review=flagged` on the question bank).
@@ -15,11 +16,13 @@ import { AdminPageHeader } from '../../components/AdminPageHeader';
 import { LibraryPanel } from '../../components/content/LibraryPanel';
 import { PatternsPanel } from '../../components/content/PatternsPanel';
 import { QuestionsPanel } from '../../components/content/QuestionsPanel';
+import { CoveragePanel } from '../../components/content/CoveragePanel';
 
 const TABS = [
   { id: 'library', label: 'Categories' },
   { id: 'patterns', label: 'Paper patterns' },
   { id: 'questions', label: 'Question bank' },
+  { id: 'coverage', label: 'Coverage' },
 ] as const;
 type TabId = (typeof TABS)[number]['id'];
 
@@ -54,6 +57,7 @@ export default function AdminContentPage() {
         {tab === 'library' && <LibraryPanel />}
         {tab === 'patterns' && <PatternsPanel />}
         {tab === 'questions' && <QuestionsPanel />}
+        {tab === 'coverage' && <CoveragePanel />}
       </div>
     </>
   );

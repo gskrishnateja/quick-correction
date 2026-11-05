@@ -15,6 +15,10 @@ const auth = authClass.get();
 router.use(auth.requireLoginToken());
 router.use(auth.requireUserRoles(['admin.system']));
 
+router.get('/coverage', error.asyncRoute(async (_req, res) => {
+  res.json(await questionsService.coverage());
+}));
+
 router.get('/', error.asyncRoute(async (req, res) => {
   const q = req.query as Record<string, string | undefined>;
   res.json(await questionsService.list({ ...q, page: q.page ? Number(q.page) : 1 }));

@@ -18,7 +18,7 @@ import { PanelTop } from './PanelTop';
 import { PageLoading } from '../PageLoading';
 
 type SectionType = 'mcq' | 'short' | 'long' | 'case';
-type Section = { title: string; type: SectionType; count: number; marksEach: number; note: string };
+type Section = { title: string; type: SectionType; count: number; marksEach: number; note: string; choices?: number };
 type Pattern = {
   id: string; subjectId: string; subjectPath: string; name: string; description: string | null;
   durationMins: number; sections: Section[]; totalMarks: number; isActive: boolean;
@@ -81,7 +81,7 @@ export function PatternsPanel() {
     setSaving(true);
     const body = {
       name: form.name, description: form.description, durationMins: Number(form.durationMins),
-      sections: form.sections.map((s) => ({ ...s, count: Number(s.count), marksEach: Number(s.marksEach) })),
+      sections: form.sections.map((s) => ({ ...s, count: Number(s.count), marksEach: Number(s.marksEach), choices: Number(s.choices || 0) })),
     };
     try {
       if (form.id) await api.patch(`/api/patterns/${form.id}`, body);
@@ -129,7 +129,7 @@ export function PatternsPanel() {
           <p>{subjects.length ? 'No patterns yet. Add one for a subject.' : 'Add a subject in Categories first, then come back to add a pattern.'}</p>
         </div>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {patterns.map((p) => (
             <Card key={p.id} className={p.isActive ? '' : 'opacity-70'}>
               <CardContent className="p-4">
@@ -206,7 +206,7 @@ export function PatternsPanel() {
                   <span className="text-sm text-muted-foreground"><strong>{sum(form.sections)}</strong> marks · {questions(form.sections)} questions</span>
                 </div>
                 {form.sections.map((s, i) => (
-                  <div key={i} className="grid grid-cols-2 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_9rem_5rem_5rem_auto]">
+                  <div key={i} className="grid grid-cols-2 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_9rem_5rem_5rem_5rem_auto]">
                     <div className="col-span-2 sm:col-span-1"><Input required aria-label="Section title" placeholder="Section A" value={s.title} onChange={(e) => setSection(i, { title: e.target.value })} /></div>
                     <div className="col-span-2 sm:col-span-1">
                       <Select value={s.type} onValueChange={(v) => setSection(i, { type: v as SectionType })}>
@@ -216,12 +216,13 @@ export function PatternsPanel() {
                     </div>
                     <Input required type="number" min={1} max={100} aria-label="Number of questions" title="Questions" value={s.count} onChange={(e) => setSection(i, { count: e.target.value as unknown as number })} />
                     <Input required type="number" min={1} max={20} aria-label="Marks each" title="Marks each" value={s.marksEach} onChange={(e) => setSection(i, { marksEach: e.target.value as unknown as number })} />
+                    <Input type="number" min={0} max={Number(s.count) || 100} aria-label="Questions with an OR choice" title="Questions with an OR choice" value={s.choices ?? 0} onChange={(e) => setSection(i, { choices: e.target.value as unknown as number })} />
                     <Button type="button" variant="ghost" size="icon" className="justify-self-end" aria-label={`Remove ${s.title || 'section'}`} disabled={form.sections.length === 1}
                       onClick={() => setForm({ ...form, sections: form.sections.filter((_, j) => j !== i) })}><X className="size-4" /></Button>
-                    <div className="col-span-2 sm:col-span-5"><Input aria-label="Instruction for students" placeholder="Instruction shown on the paper (optional)" value={s.note} onChange={(e) => setSection(i, { note: e.target.value })} /></div>
+                    <div className="col-span-2 sm:col-span-6"><Input aria-label="Instruction for students" placeholder="Instruction shown on the paper (optional)" value={s.note} onChange={(e) => setSection(i, { note: e.target.value })} /></div>
                   </div>
                 ))}
-                <p className="text-xs text-muted-foreground">Per section: questions, then marks each.</p>
+                <p className="text-xs text-muted-foreground">Per section: questions, marks each, then how many offer an OR choice.</p>
                 <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, sections: [...form.sections, { ...BLANK_SECTION, title: `Section ${String.fromCharCode(65 + form.sections.length)}` }] })}>
                   <Plus className="size-4" /> Add section
                 </Button>

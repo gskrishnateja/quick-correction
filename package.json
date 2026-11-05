@@ -35,6 +35,7 @@
     "db:seed:qc": "tsx prisma/seeding/qc.seed.ts",
     "db:seed:library": "tsx prisma/seeding/library.seed.ts",
     "db:seed:topics": "tsx prisma/seeding/topics.seed.ts",
+    "db:seed:patterns": "tsx prisma/seeding/patterns.seed.ts",
     "db:import:ai": "tsx prisma/seeding/ai-questions.import.ts",
     "eval:marking": "tsx scripts/marking-eval.ts"
   },

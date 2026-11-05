@@ -181,6 +181,7 @@ model CurriculumNode {
   children  CurriculumNode[] @relation("CurriculumTree")
   patterns  PaperPattern[]
   questions Question[]
+  questionPatterns QuestionPattern[]
   position  Int              @default(0)
   isActive  Boolean          @default(true)
   // Topics only: how this topic is tested. questionTypes is a subset of
@@ -227,7 +228,7 @@ model Question {
   id         String         @id @default(cuid())
   topicId    String
   topic      CurriculumNode @relation(fields: [topicId], references: [id], onDelete: Restrict)
-  type       String // 'mcq' | 'short' | 'long' | 'case'
+  type       String // 'mcq' | 'assertion_reason' | 'short' | 'long' | 'case'
   complexity String         @default("medium") // 'easy' | 'medium' | 'hard'
   marks      Int
   text       String
@@ -240,12 +241,85 @@ model Question {
   source       String       @default("manual") // 'seed' | 'ai' | 'manual'
   reviewStatus String       @default("approved") // 'draft' | 'approved' | 'rejected' | 'flagged'
   reviewNote   String?
+  // The kind of question this is, which carries its board history.
+  patternId  String?
+  pattern    QuestionPattern? @relation(fields: [patternId], references: [id], onDelete: SetNull)
+  // A printed figure: checked SVG text, with a description of what it shows.
+  figureSvg  String?
+  figureAlt  String?
+  // Case study parts: [{ label, marks, text, answer }]. Null when they are still in `text`.
+  parts      Json?
+  // Marks by step: [{ step, marks }]. Null when only `answer` is recorded.
+  markingSteps Json?
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
 
   @@index([topicId])
   @@index([reviewStatus])
+  @@index([patternId])
   @@map("questions")
+}
+
+// One distinct kind of question in one paper slot, with how many the bank should
+// hold at each difficulty and when the board has asked it. Loaded from
+// docs/content/question-patterns by `npm run db:seed:patterns`.
+model QuestionPattern {
+  id          String         @id // e.g. RN-IRR-14
+  topicId     String
+  topic       CurriculumNode @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  slot        String // 'A-MCQ' | 'A-AR' | 'B' | 'C' | 'D' | 'E'
+  pattern     String
+  sample      String
+  targetEasy   Int           @default(0)
+  targetMedium Int           @default(0)
+  targetHard   Int           @default(0)
+  needsFigure Boolean        @default(false)
+  competency  Boolean        @default(false)
+  // 'core', or 'verify' while waiting on the official syllabus.
+  scope       String         @default("core")
+  scopeNote   String?
+  timesAsked  Int            @default(0)
+  // ["2019 main", "2025 compartment"], oldest first.
+  seenIn      Json           @default("[]")
+  lastAsked   Int?
+  questions   Question[]
+  boardQuestions BoardQuestion[]
+
+  @@index([topicId])
+  @@map("question_patterns")
+}
+
+// A question as it appeared in a real board paper, in our own words: never the
+// board's text. `paperId` matches docs/content/pyq-sources.json.
+model BoardQuestion {
+  id             String   @id @default(cuid())
+  paperId        String
+  year           Int
+  exam           String // 'main' | 'compartment' | 'second'
+  series         String?
+  qno            String
+  section        String
+  marks          Int
+  type           String
+  chapter        String
+  topic          String
+  complexity     String
+  competency     Boolean  @default(false)
+  internalChoice Boolean  @default(false)
+  hasFigure      Boolean  @default(false)
+  legacySyllabus Boolean  @default(false)
+  summary        String?
+  template       String?
+  parts          Json?
+  confidence     String?
+  patternId      String?
+  pattern        QuestionPattern? @relation(fields: [patternId], references: [id], onDelete: SetNull)
+
+  @@unique([paperId, qno])
+  @@index([patternId])
+  @@index([year])
+  @@index([chapter])
+  @@map("board_questions")
 }
 
 // Background jobs for the appkit queue's database transport (picked

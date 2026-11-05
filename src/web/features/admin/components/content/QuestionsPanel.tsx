@@ -17,22 +17,26 @@ import {
 import { Plus, Pencil, Trash2, Eye, EyeOff, Search, Loader2, AlertTriangle, FileQuestion, ChevronLeft, ChevronRight, ChevronDown, Check, X, Sparkles, FolderTree } from 'lucide-react';
 import { api } from '@/shared/api';
 import { MathText } from '@/shared/MathText';
+import { QuestionFigure } from '@/shared/QuestionFigure';
 import { PanelTop } from './PanelTop';
 import { PageLoading } from '../PageLoading';
 
-type QType = 'mcq' | 'short' | 'long' | 'case';
+type QType = 'mcq' | 'assertion_reason' | 'short' | 'long' | 'case';
 type Complexity = 'easy' | 'medium' | 'hard';
 type Review = 'draft' | 'approved' | 'rejected' | 'flagged';
 type Question = {
   id: string; topicId: string; topicPath: string[]; type: QType; complexity: Complexity; marks: number;
   text: string; options: string[] | null; answer: string | null; isActive: boolean; used?: boolean;
   source: 'seed' | 'ai' | 'manual'; reviewStatus: Review; reviewNote: string | null;
+  figureSvg: string | null; figureAlt: string | null; askedIn: string[]; lastAsked: number | null;
+  parts: { label: string; marks: number; text: string; answer?: string }[] | null;
+  markingSteps: { step: string; marks: number }[] | null;
 };
 type Counts = Record<Review, number>;
 type LibNode = { id: string; kind: string; name: string; questionCount?: number; children: LibNode[] };
 type Choice = { id: string; label: string; chapterId: string };
 
-const TYPE_LABEL: Record<QType, string> = { mcq: 'Multiple choice', short: 'Short answer', long: 'Long answer', case: 'Case study' };
+const TYPE_LABEL: Record<QType, string> = { mcq: 'Multiple choice', assertion_reason: 'Assertion-reason', short: 'Short answer', long: 'Long answer', case: 'Case study' };
 const REVIEW_TABS: { id: 'all' | Review; label: string }[] = [
   { id: 'draft', label: 'To review' }, { id: 'flagged', label: 'Flagged' }, { id: 'approved', label: 'Approved' }, { id: 'rejected', label: 'Rejected' }, { id: 'all', label: 'All' },
 ];
@@ -110,8 +114,13 @@ function CategoryTree({ nodes, selected, open, onToggle, onPick, total }: {
   );
 }
 
-type Form = { id: string | null; topicId: string; type: QType; complexity: Complexity; marks: string; text: string; options: string[]; answer: string };
-const blank = (topicId = ''): Form => ({ id: null, topicId, type: 'short', complexity: 'medium', marks: '2', text: '', options: ['', '', '', ''], answer: '' });
+type PartRow = { label: string; marks: string; text: string; answer: string };
+type StepRow = { step: string; marks: string };
+type Form = { id: string | null; topicId: string; type: QType; complexity: Complexity; marks: string; text: string; options: string[]; answer: string; figureSvg: string; figureAlt: string; parts: PartRow[]; steps: StepRow[] };
+const blank = (topicId = ''): Form => ({ id: null, topicId, type: 'short', complexity: 'medium', marks: '2', text: '', options: ['', '', '', ''], answer: '', figureSvg: '', figureAlt: '', parts: [], steps: [] });
+const hasOptions = (t: QType) => t === 'mcq' || t === 'assertion_reason';
+/** Short list of when the board asked this kind of question: the latest few years. */
+const askedLabel = (l: string[]) => { const y = [...new Set(l.map((s) => s.split(' ')[0]))]; return `Asked ${y.slice(-3).join(', ')}`; };
 
 export function QuestionsPanel() {
   const confirm = useConfirm();
@@ -120,7 +129,7 @@ export function QuestionsPanel() {
   const [pageSize, setPageSize] = React.useState(50);
   const [page, setPage] = React.useState(1);
   const [params] = useSearchParams();
-  const [filters, setFilters] = React.useState({ q: '', nodeId: params.get('topic') ?? params.get('chapter') ?? '', type: 'all', complexity: 'all', status: 'all', review: ['draft', 'flagged', 'approved', 'rejected'].includes(params.get('review') ?? '') ? params.get('review')! : 'all' });
+  const [filters, setFilters] = React.useState({ q: '', nodeId: params.get('topic') ?? params.get('chapter') ?? '', type: 'all', complexity: 'all', status: 'all', asked: 'all', review: ['draft', 'flagged', 'approved', 'rejected'].includes(params.get('review') ?? '') ? params.get('review')! : 'all' });
   const [counts, setCounts] = React.useState<Counts>({ draft: 0, approved: 0, rejected: 0, flagged: 0 });
   const [picked, setPicked] = React.useState<Set<string>>(new Set());
   const [reviewing, setReviewing] = React.useState(false);
@@ -153,7 +162,7 @@ export function QuestionsPanel() {
     try {
       const query: Record<string, string> = { page: String(page) };
       if (filters.q.trim()) query.q = filters.q.trim();
-      for (const k of ['type', 'complexity', 'status', 'review'] as const) if (filters[k] !== 'all') query[k] = filters[k];
+      for (const k of ['type', 'complexity', 'status', 'review', 'asked'] as const) if (filters[k] !== 'all') query[k] = filters[k];
       if (filters.nodeId) query.nodeId = filters.nodeId;
       const r = await api.get<{ questions: Question[]; total: number; pageSize: number; counts: Counts }>('/api/questions', { query });
       setRows(r.questions);
@@ -191,7 +200,7 @@ export function QuestionsPanel() {
 
   function edit(q: Question) {
     setFormError(null);
-    setForm({ id: q.id, topicId: q.topicId, type: q.type, complexity: q.complexity, marks: String(q.marks), text: q.text, options: [...(q.options ?? []), '', '', '', ''].slice(0, Math.max(4, q.options?.length ?? 0)), answer: q.answer ?? '' });
+    setForm({ id: q.id, topicId: q.topicId, type: q.type, complexity: q.complexity, marks: String(q.marks), text: q.text, options: [...(q.options ?? []), '', '', '', ''].slice(0, Math.max(4, q.options?.length ?? 0)), answer: q.answer ?? '', figureSvg: q.figureSvg ?? '', figureAlt: q.figureAlt ?? '', parts: (q.parts ?? []).map((p) => ({ label: p.label, marks: String(p.marks), text: p.text, answer: p.answer ?? '' })), steps: (q.markingSteps ?? []).map((m) => ({ step: m.step, marks: String(m.marks) })) });
   }
 
   async function save(e: React.FormEvent) {
@@ -201,7 +210,10 @@ export function QuestionsPanel() {
     setFormError(null);
     const body = {
       topicId: form.topicId, type: form.type, complexity: form.complexity, marks: Number(form.marks), text: form.text,
-      options: form.type === 'mcq' ? form.options : null, answer: form.answer,
+      options: hasOptions(form.type) ? form.options : null, answer: form.answer,
+      figureSvg: form.figureSvg || null, figureAlt: form.figureAlt || null,
+      parts: form.type === 'case' && form.parts.length ? form.parts.map((p) => ({ ...p, marks: Number(p.marks) })) : null,
+      markingSteps: form.steps.length ? form.steps.map((m) => ({ step: m.step, marks: Number(m.marks) })) : null,
     };
     try {
       if (form.id) await api.patch(`/api/questions/${form.id}`, body);
@@ -227,6 +239,20 @@ export function QuestionsPanel() {
     try { await api.delete(`/api/questions/${q.id}`); await load(); }
     catch (err) { toast.error(err instanceof Error ? err.message : 'Could not delete it.'); }
   }
+
+  // One set of row actions: their own column from sm up, under the question on a phone.
+  const rowActions = (q: Question) => (
+    <>
+      {(q.reviewStatus === 'draft' || q.reviewStatus === 'flagged') && (
+        <Button size="icon" variant="ghost" aria-label="Approve question" title="Approve — makes it live" disabled={reviewing} onClick={() => review([q.id], 'approved')}><Check className="size-4 text-success" /></Button>
+      )}
+      <Button variant="ghost" size="icon" aria-label="Edit question" title="Edit" onClick={() => edit(q)}><Pencil className="size-4" /></Button>
+      <Button variant="ghost" size="icon" aria-label={q.isActive ? 'Hide question' : 'Show question'} title={q.isActive ? 'Hide from new papers' : 'Show in new papers'} onClick={() => toggle(q)}>
+        {q.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+      </Button>
+      <Button variant="ghost" size="icon" aria-label="Delete question" title={q.used ? 'Used by a paper — hide it instead' : 'Delete'} disabled={q.used} onClick={() => remove(q)}><Trash2 className="size-4 text-destructive" /></Button>
+    </>
+  );
 
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const index = React.useMemo(() => indexTree(tree), [tree]);
@@ -288,6 +314,7 @@ export function QuestionsPanel() {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <ChipGroup label="Type" value={filters.type} onChange={(v) => setFilter({ type: v })} options={[['all', 'All'], ...(Object.keys(TYPE_LABEL) as QType[]).map((t) => [t, TYPE_LABEL[t]] as [string, string])]} />
               <ChipGroup label="Level" value={filters.complexity} onChange={(v) => setFilter({ complexity: v })} options={[['all', 'Any'], ...(Object.keys(COMPLEXITY_LABEL) as Complexity[]).map((c) => [c, COMPLEXITY_LABEL[c]] as [string, string])]} />
+              <ChipGroup label="Board" value={filters.asked} onChange={(v) => setFilter({ asked: v })} options={[['all', 'Any'], ['recent', 'Last 3 years'], ['never', 'Not asked']]} />
               <ChipGroup label="Shown" value={filters.status} onChange={(v) => setFilter({ status: v })} options={[['all', 'All'], ['active', 'Active'], ['hidden', 'Hidden']]} />
             </div>
           </div>
@@ -323,7 +350,7 @@ export function QuestionsPanel() {
                   <TableHead className="hidden 2xl:table-cell">Topic</TableHead>
                   <TableHead className="hidden sm:table-cell">Type</TableHead>
                   <TableHead>Marks</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="hidden text-right sm:table-cell">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -339,6 +366,8 @@ export function QuestionsPanel() {
                       </button>
                       <div className="mt-1 flex flex-wrap items-center gap-1.5">
                         {q.source === 'ai' && <Badge variant="outline"><Sparkles className="mr-1 size-3" />AI</Badge>}
+                        {q.askedIn.length > 0 && <Badge variant="outline" title={`This type asked: ${q.askedIn.join(', ')}`}>{askedLabel(q.askedIn)}</Badge>}
+                        {q.figureSvg && <Badge variant="secondary">Figure</Badge>}
                         {q.reviewStatus === 'draft' && <Badge variant="secondary">To review</Badge>}
                         {q.reviewStatus === 'flagged' && <Badge variant="outline" className="text-destructive">Flagged</Badge>}
                         {q.reviewStatus === 'rejected' && <Badge variant="outline">Rejected</Badge>}
@@ -347,6 +376,7 @@ export function QuestionsPanel() {
                         <Badge variant="outline">{TYPE_LABEL[q.type]}</Badge>
                         <Badge variant="secondary">{COMPLEXITY_LABEL[q.complexity]}</Badge>
                       </div>
+                      <div className="-ml-2 mt-1 flex items-center sm:hidden">{rowActions(q)}</div>
                     </TableCell>
                     <TableCell className="hidden align-top text-sm text-muted-foreground 2xl:table-cell">{q.topicPath.slice(-2).join(' › ')}</TableCell>
                     <TableCell className="hidden align-top sm:table-cell">
@@ -356,15 +386,8 @@ export function QuestionsPanel() {
                       </div>
                     </TableCell>
                     <TableCell className="align-top">{q.marks}{!q.isActive && q.reviewStatus === 'approved' && <Badge variant="secondary" className="ml-2">Hidden</Badge>}</TableCell>
-                    <TableCell className="whitespace-nowrap text-right align-top">
-                      {(q.reviewStatus === 'draft' || q.reviewStatus === 'flagged') && (
-                        <Button size="icon" variant="ghost" aria-label="Approve question" title="Approve — makes it live" disabled={reviewing} onClick={() => review([q.id], 'approved')}><Check className="size-4 text-success" /></Button>
-                      )}
-                      <Button variant="ghost" size="icon" aria-label="Edit question" title="Edit" onClick={() => edit(q)}><Pencil className="size-4" /></Button>
-                      <Button variant="ghost" size="icon" aria-label={q.isActive ? 'Hide question' : 'Show question'} title={q.isActive ? 'Hide from new papers' : 'Show in new papers'} onClick={() => toggle(q)}>
-                        {q.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-                      </Button>
-                      <Button variant="ghost" size="icon" aria-label="Delete question" title={q.used ? 'Used by a paper — hide it instead' : 'Delete'} disabled={q.used} onClick={() => remove(q)}><Trash2 className="size-4 text-destructive" /></Button>
+                    <TableCell className="hidden whitespace-nowrap text-right align-top sm:table-cell">
+                      {rowActions(q)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -402,12 +425,16 @@ export function QuestionsPanel() {
               )}
               <div className="space-y-3 text-sm">
                 <p className="whitespace-pre-wrap"><MathText text={preview.text} /></p>
+                <QuestionFigure svg={preview.figureSvg} alt={preview.figureAlt} />
+                {preview.parts && <ol className="space-y-1">{preview.parts.map((p) => <li key={p.label}><span className="text-muted-foreground">({p.label}) [{p.marks}] </span><MathText text={p.text} />{p.answer && <span className="block text-xs text-muted-foreground">Key: <MathText text={p.answer} /></span>}</li>)}</ol>}
                 {preview.options && (
                   <ol className="list-[upper-alpha] space-y-1 pl-6">{preview.options.map((o, i) => <li key={i}><MathText text={String(o)} /></li>)}</ol>
                 )}
                 <div className="rounded-lg border border-border bg-muted p-3">
                   <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Answer</p>
                   <p className="whitespace-pre-wrap">{preview.answer ? <MathText text={preview.answer} /> : 'No answer recorded.'}</p>
+                  {!!preview.markingSteps?.length && <ul className="mt-2 space-y-0.5">{preview.markingSteps.map((m, i) => <li key={i} className="flex justify-between gap-3"><span><MathText text={m.step} /></span><span className="shrink-0 tabular-nums text-muted-foreground">{m.marks}</span></li>)}</ul>}
+                  {preview.askedIn.length > 0 && <p className="mt-2 text-xs text-muted-foreground">This type asked: {preview.askedIn.join(', ')}</p>}
                 </div>
               </div>
               <DialogFooter>
@@ -466,7 +493,37 @@ export function QuestionsPanel() {
                     </div>
                   )}
                 </div>
-                {form.type === 'mcq' && (
+                <div className="sm:col-span-3">
+                  <FormField label="Figure (optional)" helper="An SVG file with drawing shapes only. Describe it too, for anyone who can't see it.">
+                    <input type="file" accept=".svg,image/svg+xml" aria-label="Figure file" className="block w-full text-sm" onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) { const svg = await file.text(); setForm((f) => f && { ...f, figureSvg: svg }); }
+                    }} />
+                  </FormField>
+                  {form.figureSvg && (
+                    <div className="mt-2 space-y-2">
+                      <QuestionFigure svg={form.figureSvg} alt={form.figureAlt} />
+                      <Input aria-label="Describe the figure" placeholder="Describe the figure" value={form.figureAlt} onChange={(e) => setForm({ ...form, figureAlt: e.target.value })} />
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setForm({ ...form, figureSvg: '', figureAlt: '' })}>Remove figure</Button>
+                    </div>
+                  )}
+                </div>
+                {form.type === 'case' && (
+                  <div className="space-y-2 sm:col-span-3">
+                    <p className="text-sm font-medium">Parts</p>
+                    {form.parts.map((p, i) => (
+                      <div key={i} className="grid grid-cols-[4rem_4rem_1fr_auto] gap-2 rounded-lg border border-border p-2">
+                        <Input aria-label="Part label" placeholder="i" value={p.label} onChange={(e) => setForm({ ...form, parts: form.parts.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)) })} />
+                        <Input aria-label="Part marks" type="number" min={1} placeholder="1" value={p.marks} onChange={(e) => setForm({ ...form, parts: form.parts.map((x, j) => (j === i ? { ...x, marks: e.target.value } : x)) })} />
+                        <Input aria-label="Part question" placeholder="Part question" value={p.text} onChange={(e) => setForm({ ...form, parts: form.parts.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)) })} />
+                        <Button type="button" variant="ghost" size="icon" aria-label="Remove part" onClick={() => setForm({ ...form, parts: form.parts.filter((_, j) => j !== i) })}><X className="size-4" /></Button>
+                        <div className="col-span-4"><Input aria-label="Part answer" placeholder="Answer key" value={p.answer} onChange={(e) => setForm({ ...form, parts: form.parts.map((x, j) => (j === i ? { ...x, answer: e.target.value } : x)) })} /></div>
+                      </div>
+                    ))}
+                    <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, parts: [...form.parts, { label: '', marks: '1', text: '', answer: '' }] })}><Plus className="size-4" /> Add part</Button>
+                  </div>
+                )}
+                {hasOptions(form.type) && (
                   <div className="grid gap-2 sm:col-span-3 sm:grid-cols-2">
                     {form.options.map((o, i) => (
                       <Input key={i} aria-label={`Option ${i + 1}`} placeholder={`Option ${String.fromCharCode(65 + i)}`} value={o}
@@ -474,6 +531,17 @@ export function QuestionsPanel() {
                     ))}
                   </div>
                 )}
+                <div className="space-y-2 sm:col-span-3">
+                  <p className="text-sm font-medium">Marks by step (optional)</p>
+                  {form.steps.map((m, i) => (
+                    <div key={i} className="grid grid-cols-[1fr_4.5rem_auto] gap-2">
+                      <Input aria-label="Step" placeholder="What earns these marks" value={m.step} onChange={(e) => setForm({ ...form, steps: form.steps.map((x, j) => (j === i ? { ...x, step: e.target.value } : x)) })} />
+                      <Input aria-label="Step marks" type="number" min={0.5} step={0.5} value={m.marks} onChange={(e) => setForm({ ...form, steps: form.steps.map((x, j) => (j === i ? { ...x, marks: e.target.value } : x)) })} />
+                      <Button type="button" variant="ghost" size="icon" aria-label="Remove step" onClick={() => setForm({ ...form, steps: form.steps.filter((_, j) => j !== i) })}><X className="size-4" /></Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, steps: [...form.steps, { step: '', marks: '1' }] })}><Plus className="size-4" /> Add step</Button>
+                </div>
                 <div className="sm:col-span-3">
                   <FormField label="Answer / marking scheme" helper="Used when marking. Never shown to students or parents.">
                     <Textarea rows={3} value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} />

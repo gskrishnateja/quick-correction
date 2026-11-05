@@ -12,6 +12,7 @@ import { ArrowLeft, Camera, ImagePlus, Send, Loader2, AlertTriangle, CheckCircle
 import { SEO } from '@/shared/SEO';
 import { api, sendFile } from '@/shared/api';
 import { MathText } from '@/shared/MathText';
+import { QuestionFigure } from '@/shared/QuestionFigure';
 import { PageThumb, samplePage, prepareImage } from '@/shared/AnswerPages';
 import { useLoad, fmtDate } from '../../lib/useLoad';
 import type { SubmissionDetail, QuestionResult } from '../../lib/types';
@@ -175,9 +176,11 @@ export default function ResultPage() {
                   {expanded && (
                     <div className="space-y-3 border-t border-border px-4 py-3 text-sm">
                       {q && <p className="whitespace-pre-wrap"><MathText text={q.text} /></p>}
+                      <QuestionFigure svg={q?.figureSvg} alt={q?.figureAlt} />
+                      {q?.alternate && <p className="whitespace-pre-wrap text-muted-foreground"><span className="font-medium">OR: </span><MathText text={q.alternate.text} /></p>}
                       {q?.options && <ol className="list-[upper-alpha] space-y-0.5 pl-6">{q.options.map((o, k) => <li key={k}><MathText text={String(o)} /></li>)}</ol>}
                       <Input aria-label={`Feedback for question ${i + 1}`} value={r.feedback} onChange={(e) => setEdit(r, { feedback: e.target.value })} />
-                      {q?.answer && <div className="rounded-lg border border-border bg-muted/50 p-3"><p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Answer key</p><p className="whitespace-pre-wrap"><MathText text={q.answer} /></p></div>}
+                      {q?.answer && <div className="rounded-lg border border-border bg-muted/50 p-3"><p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Answer key</p><p className="whitespace-pre-wrap"><MathText text={q.answer} /></p>{!!q.markingSteps?.length && <ul className="mt-2 space-y-0.5">{q.markingSteps.map((m, k) => <li key={k} className="flex justify-between gap-3"><span><MathText text={m.step} /></span><span className="shrink-0 tabular-nums text-muted-foreground">{m.marks}</span></li>)}</ul>}</div>}
                     </div>
                   )}
                 </li>

@@ -38,6 +38,7 @@ export type ApiRoute =
   | '/api/people/me'
   | '/api/questions'
   | `/api/questions/${string}`
+  | '/api/questions/coverage'
   | '/api/questions/review'
   | `/api/settings/admin/${string}`
   | '/api/settings/admin/email-env'
@@ -93,6 +94,7 @@ export const API_ROUTES = [
   '/api/people',
   '/api/people/me',
   '/api/questions',
+  '/api/questions/coverage',
   '/api/questions/review',
   '/api/settings/admin/email-env',
   '/api/settings/admin/email-test',

@@ -12,7 +12,8 @@ import { auditService } from '../audit/audit.service.js';
 
 const error = errorClass.get();
 
-const TYPES = ['mcq', 'short', 'long', 'case'];
+const TYPES = ['mcq', 'assertion_reason', 'short', 'long', 'case'];
+const MAX_SVG = 200_000;
 const COMPLEXITIES = ['easy', 'medium', 'hard'];
 const PAGE = 50;
 
@@ -21,7 +22,21 @@ const REVIEW = ['draft', 'approved', 'rejected', 'flagged'];
 type Input = {
   topicId?: string; type?: string; complexity?: string; marks?: number; text?: string; options?: string[] | null; answer?: string | null;
   isActive?: boolean; competency?: boolean; reviewStatus?: string; reviewNote?: string | null;
+  patternId?: string | null; figureSvg?: string | null; figureAlt?: string | null;
+  parts?: { label: string; marks: number; text: string; answer?: string }[] | null;
+  markingSteps?: { step: string; marks: number }[] | null;
 };
+
+/** A figure is shown as an image, but anything that could run or fetch is refused here too. */
+function cleanSvg(raw: unknown): string {
+  const svg = String(raw ?? '').trim();
+  if (svg.length > MAX_SVG) throw error.badRequest('The figure is too large. Keep it under 200 KB.');
+  if (!/^(<\?xml[^>]*>\s*)?<svg[\s>]/i.test(svg) || !/<\/svg>\s*$/i.test(svg)) throw error.badRequest('The figure must be an SVG image');
+  if (/<script|<foreignObject|<iframe|<embed|<object|<image|\son[a-z]+\s*=|javascript:|(?:xlink:)?href\s*=\s*["'](?!#)|url\(\s*["']?(?!#)/i.test(svg)) {
+    throw error.badRequest('The figure can only hold drawing shapes: no scripts, links or outside images');
+  }
+  return svg;
+}
 
 async function pathOf(db: any, topicId: string) {
   const names: string[] = [];
@@ -66,6 +81,29 @@ async function clean(db: any, data: Input, partial: boolean) {
       out.options = opts.length ? opts : null;
     }
   }
+  if (data.patternId !== undefined) {
+    if (data.patternId && !(await db.questionPattern.findUnique({ where: { id: data.patternId } }))) throw error.badRequest('Unknown question pattern');
+    out.patternId = data.patternId || null;
+  }
+  if (data.figureSvg !== undefined) out.figureSvg = data.figureSvg ? cleanSvg(data.figureSvg) : null;
+  if (data.figureAlt !== undefined) out.figureAlt = data.figureAlt === null ? null : String(data.figureAlt).trim() || null;
+  if (out.figureSvg && !out.figureAlt && !data.figureAlt) throw error.badRequest('Describe the figure, for people who cannot see it');
+  if (data.parts !== undefined) {
+    if (data.parts === null) out.parts = null;
+    else {
+      const parts = (Array.isArray(data.parts) ? data.parts : []).map((p) => ({ label: String(p?.label ?? '').trim(), marks: Number(p?.marks), text: String(p?.text ?? '').trim(), answer: String(p?.answer ?? '').trim() }));
+      if (parts.some((p) => !p.label || !p.text || !Number.isInteger(p.marks) || p.marks < 1)) throw error.badRequest('Each part needs a label, text and whole marks');
+      out.parts = parts.length ? parts : null;
+    }
+  }
+  if (data.markingSteps !== undefined) {
+    if (data.markingSteps === null) out.markingSteps = null;
+    else {
+      const steps = (Array.isArray(data.markingSteps) ? data.markingSteps : []).map((s) => ({ step: String(s?.step ?? '').trim(), marks: Number(s?.marks) }));
+      if (steps.some((s) => !s.step || !(s.marks > 0))) throw error.badRequest('Each marking step needs a description and marks');
+      out.markingSteps = steps.length ? steps : null;
+    }
+  }
   if (data.answer !== undefined) out.answer = data.answer === null ? null : String(data.answer).trim() || null;
   if (typeof data.isActive === 'boolean') out.isActive = data.isActive;
   if (typeof data.competency === 'boolean') out.competency = data.competency;
@@ -76,20 +114,63 @@ async function clean(db: any, data: Input, partial: boolean) {
     // Only approved questions are live; anything else is held back from papers.
     out.isActive = data.reviewStatus === 'approved';
   }
+  // Parts and steps must add up to the question's marks.
+  const marks = (out.marks ?? data.marks) as number | undefined;
+  const sum = (l: unknown) => (l as { marks: number }[]).reduce((n, x) => n + x.marks, 0);
+  if (marks && out.parts && sum(out.parts) !== marks) throw error.badRequest(`The parts add up to ${sum(out.parts)} marks, but the question is worth ${marks}`);
+  if (marks && out.markingSteps && Math.abs(sum(out.markingSteps) - marks) > 1e-6) throw error.badRequest(`The marking steps add up to ${sum(out.markingSteps)} marks, but the question is worth ${marks}`);
   return out;
 }
 
 async function shape(db: any, q: any, usedIds?: Set<string>) {
-  return { ...q, topicPath: await pathOf(db, q.topicId), used: usedIds?.has(q.id) ?? undefined };
+  const { pattern, ...rest } = q;
+  return { ...rest, topicPath: await pathOf(db, q.topicId), used: usedIds?.has(q.id) ?? undefined, askedIn: (pattern?.seenIn as string[] | undefined) ?? [], lastAsked: pattern?.lastAsked ?? null };
 }
 
 async function usedQuestionIds(db: any): Promise<Set<string>> {
-  const papers = await db.paper.findMany({ select: { questionIds: true } });
-  return new Set(papers.flatMap((p: any) => p.questionIds as string[]));
+  const papers = await db.paper.findMany({ select: { questionIds: true, layout: true } });
+  return new Set(papers.flatMap((p: any) => [
+    ...(p.questionIds as string[]),
+    ...((p.layout as { alternates?: Record<string, string> }[] | null) ?? []).flatMap((s) => Object.values(s.alternates ?? {})),
+  ]));
 }
 
 export const questionsService = {
-  async list(f: { nodeId?: string; topicId?: string; chapterId?: string; type?: string; complexity?: string; status?: string; review?: string; q?: string; page?: number }) {
+  /** Chapter > topic > pattern, each with target, have and gap at every difficulty. */
+  async coverage() {
+    const db = await databaseClass.get();
+    const LEVELS = ['easy', 'medium', 'hard'] as const;
+    const patterns = await db.questionPattern.findMany({
+      include: { topic: { select: { id: true, name: true, position: true, parent: { select: { id: true, name: true, position: true } } } } },
+      orderBy: [{ id: 'asc' }],
+    });
+    const live = await db.question.groupBy({ by: ['patternId', 'complexity'], where: { isActive: true, patternId: { not: null } }, _count: { _all: true } });
+    const have = new Map<string, number>();
+    for (const r of live as { patternId: string; complexity: string; _count: { _all: number } }[]) have.set(`${r.patternId}|${r.complexity}`, r._count._all);
+    const blank = () => ({ easy: 0, medium: 0, hard: 0 });
+    const add = (to: Record<string, number>, from: Record<string, number>) => { for (const k of LEVELS) to[k] += from[k]; };
+    const chapters = new Map<string, any>();
+    for (const p of patterns as any[]) {
+      const target = { easy: p.targetEasy, medium: p.targetMedium, hard: p.targetHard };
+      const got = { easy: have.get(`${p.id}|easy`) ?? 0, medium: have.get(`${p.id}|medium`) ?? 0, hard: have.get(`${p.id}|hard`) ?? 0 };
+      const gap = { easy: Math.max(0, target.easy - got.easy), medium: Math.max(0, target.medium - got.medium), hard: Math.max(0, target.hard - got.hard) };
+      const ch = p.topic.parent;
+      if (!chapters.has(ch.id)) chapters.set(ch.id, { id: ch.id, name: ch.name, position: ch.position, target: blank(), have: blank(), gap: blank(), topics: new Map() });
+      const c = chapters.get(ch.id);
+      if (!c.topics.has(p.topic.id)) c.topics.set(p.topic.id, { id: p.topic.id, name: p.topic.name, position: p.topic.position, scope: p.scope, target: blank(), have: blank(), gap: blank(), figures: 0, lastAsked: null, patterns: [] });
+      const t = c.topics.get(p.topic.id);
+      for (const o of [c, t]) { add(o.target, target); add(o.have, got); add(o.gap, gap); }
+      if (p.needsFigure) t.figures += target.easy + target.medium + target.hard;
+      t.lastAsked = Math.max(t.lastAsked ?? 0, p.lastAsked ?? 0) || null;
+      t.patterns.push({ id: p.id, slot: p.slot, pattern: p.pattern, sample: p.sample, needsFigure: p.needsFigure, seenIn: p.seenIn, target, have: got, gap });
+    }
+    const list = [...chapters.values()].sort((a, b) => a.position - b.position).map((c) => ({ ...c, topics: [...c.topics.values()].sort((a: any, b: any) => a.position - b.position) }));
+    const totals = { target: blank(), have: blank(), gap: blank() };
+    for (const c of list) { add(totals.target, c.target); add(totals.have, c.have); add(totals.gap, c.gap); }
+    return { chapters: list, totals };
+  },
+
+  async list(f: { nodeId?: string; topicId?: string; chapterId?: string; type?: string; complexity?: string; status?: string; review?: string; q?: string; page?: number; asked?: string; pattern?: string }) {
     const db = await databaseClass.get();
     const where: any = {};
     if (f.nodeId) {
@@ -108,12 +189,16 @@ export const questionsService = {
     if (f.status === 'hidden') where.isActive = false;
     if (f.review && REVIEW.includes(f.review)) where.reviewStatus = f.review;
     if (f.q?.trim()) where.text = { contains: f.q.trim() };
+    if (f.pattern) where.patternId = f.pattern;
+    // Board history comes from the question's pattern.
+    if (f.asked === 'recent') where.pattern = { lastAsked: { gte: new Date().getFullYear() - 2 } };
+    if (f.asked === 'never') where.OR = [{ patternId: null }, { pattern: { timesAsked: 0 } }];
     const page = Math.max(1, Math.floor(f.page ?? 1));
 
     const { reviewStatus: _tab, ...scope } = where;
     const [total, rows, used, reviewCounts] = await Promise.all([
       db.question.count({ where }),
-      db.question.findMany({ where, orderBy: [{ createdAt: 'desc' }, { id: 'asc' }], skip: (page - 1) * PAGE, take: PAGE }),
+      db.question.findMany({ where, include: { pattern: { select: { seenIn: true, lastAsked: true } } }, orderBy: [{ createdAt: 'desc' }, { id: 'asc' }], skip: (page - 1) * PAGE, take: PAGE }),
       usedQuestionIds(db),
       db.question.groupBy({ by: ['reviewStatus'], where: scope, _count: { _all: true } }),
     ]);

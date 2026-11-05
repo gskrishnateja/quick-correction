@@ -7,8 +7,13 @@ export type Subject = { id: string; name: string; label: string; patterns: Patte
 export type Question = {
   id: string; section: string; chapter: string; topic: string; type: string; complexity: string;
   text: string; options?: (string | number)[]; marks: number; answer?: string;
+  figureSvg?: string; figureAlt?: string; askedIn?: string[];
+  parts?: { label: string; marks: number; text: string; answer?: string }[];
+  markingSteps?: { step: string; marks: number }[];
+  /** The OR alternative, when this question offers an internal choice. */
+  alternate?: Omit<Question, 'section' | 'alternate'>;
 };
-export type LayoutSection = { title: string; note: string; type: string; marksEach: number; questionIds: string[] };
+export type LayoutSection = { title: string; note: string; type: string; marksEach: number; questionIds: string[]; alternates?: Record<string, string> };
 
 export type PaperRow = {
   id: string; title: string; pattern: string; durationMins: number; createdAt: string;

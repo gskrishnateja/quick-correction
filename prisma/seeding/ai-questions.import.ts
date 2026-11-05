@@ -14,6 +14,9 @@ import { databaseClass } from '@bloomneo/appkit/database';
 type Row = {
   chapter: string; topic: string; type: string; marks: number; complexity: string; competency?: boolean;
   text: string; options?: string[]; answer?: string;
+  patternId?: string; figureSvg?: string; figureAlt?: string;
+  parts?: { label: string; marks: number; text: string; answer?: string }[];
+  markingSteps?: { step: string; marks: number }[];
   verification?: { status: 'ok' | 'mismatch' | 'ambiguous' | 'invalid'; note?: string; correctedAnswer?: string };
 };
 
@@ -47,6 +50,8 @@ async function main() {
         data: {
           topicId: topicCache.get(key)!, type: r.type, complexity: r.complexity, marks: r.marks, text: r.text.trim(),
           options: r.options ?? undefined, answer, competency: !!r.competency,
+          patternId: r.patternId ?? null, figureSvg: r.figureSvg ?? null, figureAlt: r.figureAlt ?? null,
+          parts: r.parts ?? undefined, markingSteps: r.markingSteps ?? undefined,
           isActive: false, source: 'ai', reviewStatus: bad ? 'flagged' : 'draft',
           reviewNote: bad ? `${r.verification!.status}: ${r.verification!.note ?? ''}`.trim() : null,
         },

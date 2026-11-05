@@ -11,7 +11,8 @@ import { auditService } from '../audit/audit.service.js';
 const error = errorClass.get();
 
 export const SECTION_TYPES = ['mcq', 'short', 'long', 'case'] as const;
-export type Section = { title: string; type: (typeof SECTION_TYPES)[number]; count: number; marksEach: number; note: string };
+/** `choices`: how many questions in the section offer an OR alternative. */
+export type Section = { title: string; type: (typeof SECTION_TYPES)[number]; count: number; marksEach: number; note: string; choices?: number };
 
 export const totalMarks = (sections: Section[]) => sections.reduce((n, s) => n + s.count * s.marksEach, 0);
 
@@ -26,7 +27,9 @@ function cleanSections(input: unknown): Section[] {
     if (!SECTION_TYPES.includes(raw?.type)) throw error.badRequest(`Section "${title}" needs a question type`);
     if (!Number.isInteger(count) || count < 1 || count > 100) throw error.badRequest(`Section "${title}": questions must be a whole number from 1 to 100`);
     if (!Number.isInteger(marksEach) || marksEach < 1 || marksEach > 20) throw error.badRequest(`Section "${title}": marks each must be a whole number from 1 to 20`);
-    return { title, type: raw.type, count, marksEach, note: String(raw?.note ?? '').trim() };
+    const choices = raw?.choices === undefined || raw?.choices === '' ? 0 : Number(raw.choices);
+    if (!Number.isInteger(choices) || choices < 0 || choices > count) throw error.badRequest(`Section "${title}": internal choices must be a whole number up to the question count`);
+    return { title, type: raw.type, count, marksEach, note: String(raw?.note ?? '').trim(), ...(choices ? { choices } : {}) };
   });
 }
 

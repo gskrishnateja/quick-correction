@@ -49,6 +49,7 @@ Rules
 - Multiple choice and assertion-reason: full marks only if the option the student chose matches the key, otherwise 0. If no option is clearly chosen, 0.
 - Written answers: share the marks over the steps in the marking scheme (setting up, working, final answer with units). A correct final answer with no working loses the method marks on questions worth 3 or more. A wrong final answer still earns marks for correct steps. If the student makes one early slip and then works correctly from it, do not take marks off twice.
 - Case-study questions: mark each sub-part on the marks shown in brackets and add them up.
+- Some questions offer an OR alternative. Mark whichever one the student answered and report it under the main question's id. If both were answered, mark the first attempt.
 - Find each answer by the question number the student wrote. Answers can be out of order or spread over several pages. If a question has no answer, give 0 and set attempted to false.
 - If the handwriting for a question is too unclear to judge, do not guess. Give marks only for what you can read, set legible to false, and say in the feedback that the teacher should look at it.
 - Mark what is written, not what the student probably meant.
@@ -63,11 +64,22 @@ Summary
 
 /** The questions with their marking schemes, as text for the model. */
 function questionBlock(questions: Question[]): string {
-  return questions.map((q, i) => {
-    const kind = q.type === 'mcq' ? 'multiple choice' : q.type === 'case' ? 'case study' : q.type === 'long' ? 'long answer' : 'short answer';
-    const lines = [`Question ${i + 1} [id: ${q.id}] (${q.marks} mark${q.marks === 1 ? '' : 's'}, ${kind}, ${q.chapter}: ${q.topic})`, q.text];
+  const scheme = (q: Omit<Question, 'section' | 'alternate'>) => {
+    const steps = q.markingSteps?.length ? `Marks by step: ${q.markingSteps.map((s) => `${s.step} [${s.marks}]`).join('; ')}. ` : '';
+    return `Marking scheme: ${steps}${q.answer?.trim() || (steps ? '' : 'No scheme recorded: mark on mathematical correctness and say so in the feedback.')}`;
+  };
+  const body = (q: Omit<Question, 'section' | 'alternate'>) => {
+    const lines = [q.text];
+    if (q.figureAlt) lines.push(`Printed figure: ${q.figureAlt}`);
     if (q.options?.length) lines.push(q.options.map((o, k) => `  ${String.fromCharCode(65 + k)}) ${o}`).join('\n'));
-    lines.push(`Marking scheme: ${q.answer?.trim() || 'No scheme recorded: mark on mathematical correctness and say so in the feedback.'}`);
+    for (const p of q.parts ?? []) lines.push(`  (${p.label}) [${p.marks}] ${p.text}${p.answer ? ` | Key: ${p.answer}` : ''}`);
+    lines.push(scheme(q));
+    return lines.join('\n');
+  };
+  return questions.map((q, i) => {
+    const kind = q.type === 'mcq' ? 'multiple choice' : q.type === 'assertion_reason' ? 'assertion-reason' : q.type === 'case' ? 'case study' : q.type === 'long' ? 'long answer' : 'short answer';
+    const lines = [`Question ${i + 1} [id: ${q.id}] (${q.marks} mark${q.marks === 1 ? '' : 's'}, ${kind}, ${q.chapter}: ${q.topic})`, body(q)];
+    if (q.alternate) lines.push(`OR, in place of this question:\n${body(q.alternate)}`);
     return lines.join('\n');
   }).join('\n\n');
 }

@@ -155,7 +155,9 @@ export const tutorService = {
     const teacherId = _teacherId;
     if (!input.patternId) throw error.badRequest('Pick a paper pattern');
     const targetMarks = input.targetMarks && input.targetMarks > 0 ? Math.min(Math.round(input.targetMarks), 200) : undefined;
-    const gen = await generatePaper({ patternId: input.patternId, chapterIds: input.chapterIds, variant: input.variant ?? 0, targetMarks });
+    const recent = await (await databaseClass.get()).paper.findMany({ where: { teacherId }, orderBy: { createdAt: 'desc' }, take: 10, select: { questionIds: true } });
+    const avoidIds = recent.flatMap((p: { questionIds: unknown }) => p.questionIds as string[]);
+    const gen = await generatePaper({ patternId: input.patternId, chapterIds: input.chapterIds, variant: input.variant ?? 0, targetMarks, avoidIds });
     const title = input.title?.trim() || (gen.allChapters ? gen.patternName : `${gen.patternName} — ${gen.chapterNames.length === 1 ? gen.chapterNames[0] : `${gen.chapterNames.length} chapters`}`);
     const shortBy = targetMarks && gen.marks < targetMarks ? targetMarks - gen.marks : 0;
 
