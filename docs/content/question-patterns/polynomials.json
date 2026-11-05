@@ -18,9 +18,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
-      "2023 main"
+      "2023 main",
+      "2025 main"
      ],
      "existingIds": [
       "cmvq9r2ho007p7gcn01pq69l5"
@@ -58,7 +59,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 7,
      "seenIn": [
       "2023 main",
       "2024 main"
@@ -79,9 +80,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 5,
      "seenIn": [
-      "2023 main"
+      "2023 main",
+      "2024 main",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2hq007x7gcnr53x7kwx"
@@ -99,7 +102,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -155,7 +158,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2026 main"
      ],
@@ -175,7 +178,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2024 main",
       "2025 main"
@@ -194,7 +197,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2026 main"
      ],
@@ -212,8 +215,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2024 main"
+     ],
      "existingIds": [
       "cmvqhe959007j7gd0x7c22hfy"
      ]
@@ -248,8 +253,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2024 compartment"
+     ],
      "existingIds": [
       "cmvq9r2hz008t7gcnqltplukj"
      ]
@@ -289,12 +296,14 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 5,
+     "seenOnBoard": 16,
      "seenIn": [
       "2020 main",
       "2023 compartment",
       "2023 main",
       "2024 main",
+      "2025 main",
+      "2026 main",
       "2026 second"
      ],
      "existingIds": []
@@ -311,7 +320,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -361,7 +370,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -379,8 +388,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2026 main"
+     ],
      "existingIds": [
       "cmvq9r2hy008n7gcnv3llzvla"
      ]
@@ -397,7 +408,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2024 main"
      ],
@@ -424,7 +435,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 19,
      "seenIn": [
       "2020 main",
       "2023 main",
@@ -464,7 +475,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -501,7 +512,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 compartment"
      ],
@@ -551,7 +562,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 compartment"
      ],
@@ -569,7 +580,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -644,7 +655,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2023 main",
       "2026 main"
@@ -665,9 +676,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 12,
      "seenIn": [
       "2020 main",
+      "2023 main",
+      "2024 main",
       "2026 main"
      ],
      "existingIds": []
@@ -684,7 +697,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2023 main"
      ],
@@ -704,8 +717,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 2,
+     "seenIn": [
+      "2023 main",
+      "2024 main"
+     ],
      "existingIds": [
       "cmvq9r2hv008d7gcn1dkwak8v"
      ]
@@ -738,8 +754,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 2,
+     "seenIn": [
+      "2025 main",
+      "2026 main"
+     ],
      "existingIds": [
       "cmvqhe957007d7gd0868d22l4"
      ]
@@ -772,7 +791,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 second"
      ],
@@ -808,7 +827,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2020 main",
       "2025 main"
@@ -847,8 +866,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 8,
      "seenIn": [
+      "2025 compartment",
       "2025 main"
      ],
      "existingIds": []
@@ -924,9 +944,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main",
+      "2025 main",
       "2026 main"
      ],
      "existingIds": [
@@ -945,8 +966,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
+      "2018 compartment",
       "2023 main",
       "2025 main"
      ],
@@ -966,9 +988,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 6,
      "seenIn": [
-      "2024 main"
+      "2024 main",
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": []
     },
@@ -984,7 +1008,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2025 main",
       "2026 second"
@@ -1003,7 +1027,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1021,7 +1045,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1057,9 +1081,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
-      "2023 main"
+      "2023 main",
+      "2025 compartment"
      ],
      "existingIds": [
       "cmvq9r2hz008r7gcni62wcquc"
@@ -1077,9 +1102,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
-      "2019 main"
+      "2019 main",
+      "2024 compartment"
      ],
      "existingIds": []
     },
@@ -1131,8 +1157,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 2,
+     "seenIn": [
+      "2025 main",
+      "2026 main"
+     ],
      "existingIds": []
     },
     {
@@ -1150,6 +1179,44 @@
      "seenOnBoard": 0,
      "seenIn": [],
      "existingIds": []
+    },
+    {
+     "id": "PO-NEW-03",
+     "pattern": "Find k when one zero of a quadratic is a stated multiple of the other, one mark",
+     "sample": "If one zero of $x^2 - 6x + k$ is twice the other, find $k$. (Answer: $k = 8$)",
+     "slot": "A-MCQ",
+     "targets": {
+      "easy": 0,
+      "medium": 1,
+      "hard": 0
+     },
+     "figure": false,
+     "competency": false,
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2023 main"
+     ],
+     "existingIds": [],
+     "addedFromBoard": true
+    },
+    {
+     "id": "PO-NEW-04",
+     "pattern": "Find two unknown coefficients of a quadratic when both its zeroes are given, three marks",
+     "sample": "If $2$ and $-\\frac{1}{3}$ are the zeroes of $ax^2 - 5x + c$, find $a$ and $c$. (Answer: $a = 3$, $c = -2$)",
+     "slot": "C",
+     "targets": {
+      "easy": 0,
+      "medium": 0,
+      "hard": 0
+     },
+     "figure": false,
+     "competency": false,
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2019 main"
+     ],
+     "existingIds": [],
+     "addedFromBoard": true
     }
    ]
   },
@@ -1170,9 +1237,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2020 main",
+      "2023 main",
+      "2024 main",
       "2025 main"
      ],
      "existingIds": [
@@ -1235,8 +1304,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
+      "2020 main",
       "2025 main"
      ],
      "existingIds": []
@@ -1288,7 +1358,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1308,7 +1378,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -1387,7 +1457,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2024 main"
      ],
@@ -1421,7 +1491,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1439,7 +1509,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2020 main"
      ],
@@ -1465,7 +1535,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2023 main",
       "2024 main"
@@ -1486,7 +1556,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2026 main"
      ],
@@ -1504,7 +1574,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 compartment"
      ],
@@ -1619,7 +1689,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
       "2020 main"
      ],
@@ -1657,7 +1727,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2019 main"
      ],
@@ -1677,7 +1747,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2019 main"
      ],
@@ -1695,7 +1765,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2018 main",
       "2019 compartment",
@@ -1715,7 +1785,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2018 compartment",
       "2020 main"
@@ -1851,8 +1921,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
+      "2019 main",
       "2020 main"
      ],
      "existingIds": [],

@@ -18,11 +18,14 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 7,
+     "seenOnBoard": 20,
      "seenIn": [
       "2019 main",
       "2020 main",
-      "2023 main"
+      "2023 main",
+      "2025 compartment",
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2gv004h7gcnsmg0xy2f",
@@ -41,10 +44,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2018 main",
       "2023 main",
+      "2025 main",
       "2026 second"
      ],
      "existingIds": [
@@ -64,12 +68,14 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 12,
      "seenIn": [
       "2011 main",
       "2017 main",
       "2019 main",
-      "2024 main"
+      "2023 compartment",
+      "2024 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2gw004l7gcn01k00dst"
@@ -87,8 +93,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 6,
      "seenIn": [
+      "2023 main",
       "2025 main"
      ],
      "existingIds": []
@@ -105,7 +112,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -123,9 +130,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2020 main",
+      "2024 main",
       "2026 main"
      ],
      "existingIds": []
@@ -142,11 +150,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 8,
      "seenIn": [
       "2020 main",
       "2024 main",
-      "2025 main"
+      "2025 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -162,7 +171,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 second"
      ],
@@ -180,7 +189,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 12,
      "seenIn": [
       "2019 main",
       "2020 main",
@@ -256,8 +265,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2026 second"
+     ],
      "existingIds": [
       "cmvq9r2h5005h7gcnrzdb7zvx"
      ]
@@ -274,13 +285,16 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 5,
+     "seenOnBoard": 19,
      "seenIn": [
+      "2016 main",
       "2017 compartment",
       "2017 main",
       "2018 compartment",
+      "2019 compartment",
       "2024 main",
-      "2025 main"
+      "2025 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -296,8 +310,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
+      "2023 main",
       "2025 main",
       "2026 main"
      ],
@@ -315,7 +330,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2026 main"
      ],
@@ -351,8 +366,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 8,
      "seenIn": [
+      "2011 main",
       "2014 main",
       "2019 main",
       "2023 main"
@@ -371,7 +387,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2016 main",
       "2025 main"
@@ -429,7 +445,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -447,9 +463,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
-      "2015 main"
+      "2015 main",
+      "2019 compartment"
      ],
      "existingIds": [
       "cmvqhe94j00577gd0eex0vxei"
@@ -467,7 +484,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -487,7 +504,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -533,7 +550,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 5,
+     "seenOnBoard": 11,
      "seenIn": [
       "2011 main",
       "2012 main",
@@ -557,10 +574,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 12,
      "seenIn": [
       "2019 compartment",
       "2023 main",
+      "2024 compartment",
       "2026 main"
      ],
      "existingIds": [
@@ -598,9 +616,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 6,
      "seenIn": [
-      "2020 main"
+      "2020 main",
+      "2024 compartment",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2gy004t7gcnp46tov2j"
@@ -618,7 +638,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -652,7 +672,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -670,11 +690,13 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 10,
      "seenIn": [
       "2019 main",
       "2023 main",
-      "2025 main"
+      "2025 main",
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -690,7 +712,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 7,
      "seenIn": [
       "2016 main",
       "2019 main",
@@ -712,7 +734,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 10,
      "seenIn": [
       "2015 main",
       "2018 main",
@@ -735,8 +757,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
+      "2023 main",
       "2024 main"
      ],
      "existingIds": []
@@ -753,7 +776,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2016 main",
       "2017 compartment"
@@ -774,7 +797,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2025 main",
       "2026 second"
@@ -793,7 +816,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 8,
+     "seenOnBoard": 19,
      "seenIn": [
       "2013 main",
       "2019 main",
@@ -818,7 +841,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 5,
+     "seenOnBoard": 10,
      "seenIn": [
       "2014 main",
       "2017 main",
@@ -843,9 +866,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
-      "2015 main"
+      "2015 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2h900617gcnl6f5c3pt"
@@ -863,8 +887,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
+      "2017 compartment",
       "2020 main",
       "2026 main"
      ],
@@ -882,7 +907,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 8,
      "seenIn": [
       "2012 main",
       "2019 compartment",
@@ -936,7 +961,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2021 compartment",
       "2025 compartment"
@@ -962,8 +987,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2023 compartment"
+     ],
      "existingIds": [
       "a12",
       "cmvq9r2gy004v7gcnt7ymlcxx",
@@ -982,7 +1009,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 11,
      "seenIn": [
       "2011 main",
       "2012 main",
@@ -1007,9 +1034,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
-      "2020 main"
+      "2020 main",
+      "2025 main"
      ],
      "existingIds": [
       "cmvq9r2h0004z7gcno5wg4l4w"
@@ -1027,7 +1055,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2025 main",
       "2026 main"
@@ -1046,7 +1074,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 compartment"
      ],
@@ -1064,7 +1092,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -1082,7 +1110,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2018 compartment",
       "2024 main"
@@ -1101,7 +1129,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1119,7 +1147,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1137,8 +1165,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
+      "2019 main",
       "2026 second"
      ],
      "existingIds": []
@@ -1155,7 +1184,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2017 main",
       "2023 main"
@@ -1176,7 +1205,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2019 main"
      ],
@@ -1196,8 +1225,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 3,
+     "seenIn": [
+      "2024 main",
+      "2025 main"
+     ],
      "existingIds": []
     },
     {
@@ -1212,7 +1244,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2020 main",
       "2025 main"
@@ -1283,12 +1315,31 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2024 compartment",
       "2024 main"
      ],
      "existingIds": []
+    },
+    {
+     "id": "CG-NEW-04",
+     "pattern": "Find the vertices of a triangle from the midpoints of its sides",
+     "sample": "The midpoints of the sides $BC$, $CA$ and $AB$ of $\\triangle ABC$ are $D(3,1)$, $E(1,4)$ and $F(-1,2)$. Find $A$, $B$ and $C$.",
+     "slot": "C",
+     "targets": {
+      "easy": 0,
+      "medium": 1,
+      "hard": 0
+     },
+     "figure": false,
+     "competency": false,
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2026 second"
+     ],
+     "existingIds": [],
+     "addedFromBoard": true
     }
    ]
   },
@@ -1309,7 +1360,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2023 main"
      ],
@@ -1329,7 +1380,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1349,8 +1400,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
+      "2023 main",
       "2025 main"
      ],
      "existingIds": [
@@ -1370,7 +1422,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -1406,7 +1458,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 7,
      "seenIn": [
       "2013 main",
       "2016 main",
@@ -1448,10 +1500,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
       "2021 compartment",
-      "2024 main"
+      "2024 main",
+      "2026 main"
      ],
      "existingIds": []
     },
@@ -1467,10 +1520,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2019 main",
-      "2026 main"
+      "2023 compartment",
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -1486,8 +1541,9 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
+      "2023 compartment",
       "2026 main"
      ],
      "existingIds": []
@@ -1504,7 +1560,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2011 main",
       "2023 main"
@@ -1543,12 +1599,13 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 11,
      "seenIn": [
       "2011 main",
       "2018 compartment",
       "2018 main",
-      "2025 main"
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2ha00677gcn4e54c6hh"
@@ -1566,7 +1623,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2025 main",
       "2026 second"
@@ -1621,7 +1678,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1648,8 +1705,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 5,
+     "seenOnBoard": 15,
      "seenIn": [
+      "2020 main",
       "2023 compartment",
       "2023 main",
       "2025 main",
@@ -1743,7 +1801,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1781,8 +1839,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2023 main"
+     ],
      "existingIds": [
       "cmvqhe94f004r7gd00cdoua7x"
      ]
@@ -1799,7 +1859,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2020 main"
      ],
@@ -1825,7 +1885,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2023 main"
      ],
@@ -1843,7 +1903,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2025 main"
      ],
@@ -1884,7 +1944,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
       "2017 main",
       "2020 main"
@@ -1903,7 +1963,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 8,
      "seenIn": [
       "2017 main",
       "2019 compartment",
@@ -1930,7 +1990,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1948,13 +2008,14 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 8,
+     "seenOnBoard": 17,
      "seenIn": [
       "2013 main",
       "2014 main",
       "2015 main",
       "2016 main",
       "2017 compartment",
+      "2017 main",
       "2019 main",
       "2020 main"
      ],
@@ -1972,7 +2033,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 9,
      "seenIn": [
       "2013 main",
       "2015 main",
@@ -1994,7 +2055,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2016 main"
      ],
@@ -2012,11 +2073,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 4,
      "seenIn": [
       "2012 main",
       "2015 main",
-      "2017 main"
+      "2017 main",
+      "2019 main"
      ],
      "existingIds": [],
      "addedFromBoard": true

@@ -18,9 +18,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 5,
+     "seenOnBoard": 13,
      "seenIn": [
       "2020 main",
+      "2024 main",
+      "2025 compartment",
       "2025 main",
       "2026 main",
       "2026 second"
@@ -41,8 +43,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
+      "2023 main",
+      "2024 compartment",
       "2026 main"
      ],
      "existingIds": []
@@ -59,7 +63,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 8,
      "seenIn": [
       "2021 compartment",
       "2024 main",
@@ -79,9 +83,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2023 main",
+      "2024 compartment",
+      "2025 compartment",
       "2026 main"
      ],
      "existingIds": [
@@ -100,7 +106,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
       "2026 main"
      ],
@@ -118,10 +124,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
       "2020 main",
-      "2024 main"
+      "2024 main",
+      "2025 main"
      ],
      "existingIds": []
     },
@@ -137,8 +144,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2025 main"
+     ],
      "existingIds": [
       "cmvq9r2ku00jp7gcnl8l3p6fs"
      ]
@@ -155,7 +164,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2024 main",
       "2025 main"
@@ -174,7 +183,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
       "2026 main"
      ],
@@ -192,8 +201,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
+      "2020 main",
       "2025 main",
       "2026 second"
      ],
@@ -229,9 +239,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
-      "2018 main"
+      "2018 main",
+      "2024 main"
      ],
      "existingIds": [
       "cmvq9r2l300kt7gcny3c95shp"
@@ -256,7 +267,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2019 main",
       "2026 second"
@@ -311,7 +322,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2020 main"
      ],
@@ -336,12 +347,13 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 7,
+     "seenOnBoard": 20,
      "seenIn": [
       "2019 main",
       "2020 main",
       "2021 compartment",
       "2023 main",
+      "2024 main",
       "2026 main",
       "2026 second"
      ],
@@ -363,7 +375,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -384,10 +396,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 8,
      "seenIn": [
       "2019 main",
       "2020 main",
+      "2024 main",
       "2025 main"
      ],
      "existingIds": []
@@ -424,7 +437,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
       "2025 main"
      ],
@@ -442,7 +455,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -460,9 +473,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2024 main",
+      "2025 main",
       "2026 main"
      ],
      "existingIds": []
@@ -479,7 +493,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -497,7 +511,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 7,
      "seenIn": [
       "2023 main",
       "2025 main"
@@ -516,7 +530,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
       "2025 main"
      ],
@@ -568,7 +582,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -586,7 +600,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 8,
+     "seenOnBoard": 22,
      "seenIn": [
       "2020 main",
       "2023 main",
@@ -610,10 +624,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2023 main",
-      "2025 main"
+      "2025 main",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2kv00jx7gcnbyn07yau"
@@ -631,10 +646,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
       "2024 compartment",
-      "2025 compartment"
+      "2025 compartment",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2kv00jt7gcn0hp0yz1r"
@@ -652,7 +668,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -686,9 +702,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
-      "2018 compartment"
+      "2018 compartment",
+      "2019 main"
      ],
      "existingIds": []
     }
@@ -729,11 +746,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 8,
      "seenIn": [
       "2020 main",
       "2023 main",
-      "2026 main"
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2kv00jv7gcn4h6p7fmm"
@@ -751,9 +769,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
       "2021 compartment",
+      "2025 main",
       "2026 main"
      ],
      "existingIds": []
@@ -770,7 +789,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -788,9 +807,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
-      "2020 main"
+      "2020 main",
+      "2023 main"
      ],
      "existingIds": []
     }
@@ -813,7 +833,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 21,
      "seenIn": [
       "2020 main",
       "2023 compartment",
@@ -839,9 +859,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2023 main",
+      "2025 main",
       "2026 main"
      ],
      "existingIds": []
@@ -858,8 +879,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2023 main"
+     ],
      "existingIds": [
       "cmvq9r2ko00iv7gcn8bvqmg28",
       "cmvq9r2ko00ix7gcn8i61rtka",
@@ -880,7 +903,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -898,8 +921,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
+      "2023 main",
       "2024 main"
      ],
      "existingIds": [
@@ -918,9 +942,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
-      "2023 main"
+      "2023 main",
+      "2025 main"
      ],
      "existingIds": []
     },
@@ -936,8 +961,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
+      "2020 main",
       "2024 main",
       "2025 compartment"
      ],
@@ -973,7 +999,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1009,7 +1035,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 7,
      "seenIn": [
       "2020 main",
       "2026 main"
@@ -1031,7 +1057,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2023 main",
       "2025 main"
@@ -1066,7 +1092,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 10,
+     "seenOnBoard": 19,
      "seenIn": [
       "2018 compartment",
       "2019 main",
@@ -1091,7 +1117,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 9,
+     "seenOnBoard": 14,
      "seenIn": [
       "2019 compartment",
       "2019 main",
@@ -1099,6 +1125,7 @@
       "2021 compartment",
       "2023 main",
       "2024 main",
+      "2025 compartment",
       "2025 main",
       "2026 main"
      ],
@@ -1116,10 +1143,13 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 8,
      "seenIn": [
       "2019 main",
-      "2023 main"
+      "2023 main",
+      "2024 main",
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2l000kj7gcnq6fg9kge"
@@ -1137,8 +1167,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 8,
      "seenIn": [
+      "2019 compartment",
+      "2023 main",
+      "2024 main",
       "2025 main"
      ],
      "existingIds": []
@@ -1155,9 +1188,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 11,
      "seenIn": [
       "2018 main",
+      "2020 main",
       "2023 main",
       "2024 main",
       "2025 main"
@@ -1176,11 +1210,16 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 13,
      "seenIn": [
+      "2018 compartment",
       "2023 main",
       "2024 compartment",
-      "2025 main"
+      "2024 main",
+      "2025 compartment",
+      "2025 main",
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2ky00kb7gcnolq8crno",
@@ -1199,9 +1238,13 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 12,
      "seenIn": [
       "2019 main",
+      "2020 main",
+      "2023 main",
+      "2024 compartment",
+      "2024 main",
       "2025 compartment",
       "2025 main",
       "2026 second"
@@ -1222,10 +1265,13 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2020 main",
-      "2023 compartment"
+      "2023 compartment",
+      "2024 main",
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2kz00kf7gcnvlp88eyn"
@@ -1243,8 +1289,14 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 6,
+     "seenIn": [
+      "2020 main",
+      "2023 compartment",
+      "2023 main",
+      "2024 main",
+      "2025 main"
+     ],
      "existingIds": [
       "cmvq9r2l100kl7gcnh06sg8a2"
      ]
@@ -1261,7 +1313,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -1279,7 +1331,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2026 main"
      ],
@@ -1299,9 +1351,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 8,
      "seenIn": [
-      "2019 main"
+      "2019 main",
+      "2023 compartment"
      ],
      "existingIds": []
     },
@@ -1317,10 +1370,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 8,
      "seenIn": [
       "2019 compartment",
-      "2019 main"
+      "2019 main",
+      "2020 main",
+      "2026 main"
      ],
      "existingIds": []
     }
@@ -1343,7 +1398,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 7,
+     "seenOnBoard": 16,
      "seenIn": [
       "2011 main",
       "2015 main",
@@ -1367,7 +1422,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 6,
+     "seenOnBoard": 13,
      "seenIn": [
       "2014 main",
       "2016 main",
@@ -1391,10 +1446,11 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
       "2020 main",
-      "2025 main"
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2kr00jb7gcnhwmcl63m"
@@ -1412,7 +1468,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 11,
+     "seenOnBoard": 28,
      "seenIn": [
       "2012 main",
       "2015 main",
@@ -1441,7 +1497,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2023 compartment",
       "2026 second"
@@ -1460,11 +1516,12 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 3,
+     "seenOnBoard": 10,
      "seenIn": [
       "2020 main",
       "2025 main",
-      "2026 main"
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -1500,8 +1557,10 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2026 second"
+     ],
      "existingIds": [
       "cmvq9r2ks00jh7gcnwf33xl9b",
       "cmvq9r2kt00jl7gcnzvhl3b5k"
@@ -1535,9 +1594,10 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
-      "2012 main"
+      "2012 main",
+      "2022 main"
      ],
      "existingIds": [
       "cmvq9r2kx00k57gcn6vge974e",
@@ -1557,7 +1617,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1575,7 +1635,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2023 main"
      ],
@@ -1593,7 +1653,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 3,
+     "seenOnBoard": 7,
      "seenIn": [
       "2011 main",
       "2014 main",
@@ -1615,7 +1675,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 3,
+     "seenOnBoard": 6,
      "seenIn": [
       "2016 main",
       "2022 compartment"
@@ -1634,9 +1694,10 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
-      "2022 main"
+      "2022 main",
+      "2023 main"
      ],
      "existingIds": []
     },
@@ -1671,7 +1732,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2017 compartment"
      ],
@@ -1691,7 +1752,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 5,
+     "seenOnBoard": 7,
      "seenIn": [
       "2012 main",
       "2013 main",
@@ -1713,10 +1774,12 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 6,
+     "seenOnBoard": 13,
      "seenIn": [
+      "2016 main",
       "2018 main",
       "2020 main",
+      "2022 main",
       "2023 compartment",
       "2023 main",
       "2025 main"
@@ -1737,10 +1800,11 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 3,
+     "seenOnBoard": 6,
      "seenIn": [
       "2017 main",
-      "2024 main"
+      "2024 main",
+      "2025 main"
      ],
      "existingIds": []
     },
@@ -1756,9 +1820,12 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2011 main",
+      "2019 main",
+      "2022 main",
+      "2023 main",
       "2024 main"
      ],
      "existingIds": []
@@ -1775,12 +1842,14 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 7,
+     "seenOnBoard": 15,
      "seenIn": [
       "2015 main",
       "2017 compartment",
+      "2019 main",
       "2020 main",
-      "2024 main"
+      "2024 main",
+      "2026 main"
      ],
      "existingIds": [
       "cmvq9r2l300kv7gcnwq7jvamd"
@@ -1798,12 +1867,16 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 4,
+     "seenOnBoard": 19,
      "seenIn": [
+      "2011 main",
       "2014 main",
+      "2018 compartment",
       "2019 compartment",
       "2020 main",
-      "2022 main"
+      "2022 main",
+      "2023 compartment",
+      "2024 main"
      ],
      "existingIds": [
       "cmvq9r2l500l17gcnznll5w16"
@@ -1821,10 +1894,13 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 8,
      "seenIn": [
       "2016 main",
-      "2022 compartment"
+      "2022 compartment",
+      "2022 main",
+      "2023 main",
+      "2024 main"
      ],
      "existingIds": [
       "cmvq9r2l500l57gcnuowz8dz5"
@@ -1842,14 +1918,17 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 7,
+     "seenOnBoard": 17,
      "seenIn": [
       "2015 main",
       "2016 main",
       "2017 main",
       "2019 main",
+      "2020 main",
       "2021 compartment",
-      "2022 main"
+      "2022 main",
+      "2024 main",
+      "2025 main"
      ],
      "existingIds": [
       "cmvq9r2l400kx7gcneuvzpbiy",
@@ -1886,10 +1965,13 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
       "2017 main",
-      "2023 main"
+      "2023 main",
+      "2024 main",
+      "2026 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -1905,8 +1987,9 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
+      "2020 main",
       "2023 main"
      ],
      "existingIds": []
@@ -1923,7 +2006,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 4,
+     "seenOnBoard": 8,
      "seenIn": [
       "2019 main",
       "2026 main"
@@ -1942,9 +2025,10 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
-      "2019 main"
+      "2019 main",
+      "2022 compartment"
      ],
      "existingIds": []
     },
@@ -1960,10 +2044,11 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2015 main",
-      "2017 main"
+      "2017 main",
+      "2020 main"
      ],
      "existingIds": [
       "cmvq9r2l400kz7gcni0bghhx3"
@@ -1997,7 +2082,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2023 main",
       "2026 main"
@@ -2016,10 +2101,11 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
       "2022 main",
-      "2025 compartment"
+      "2025 compartment",
+      "2026 second"
      ],
      "existingIds": [
       "cmvq9r2l600l77gcnmmrkeo8n"
@@ -2037,7 +2123,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2024 compartment",
       "2026 second"
@@ -2058,7 +2144,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2025 main",
       "2026 main"
@@ -2077,7 +2163,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -2095,7 +2181,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 main"
      ],
@@ -2113,7 +2199,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -2131,7 +2217,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2022 main"
      ],
@@ -2149,7 +2235,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -2173,6 +2259,44 @@
       "cmvq9r2l600l97gcn1q9d0rdm",
       "cmvq9r2l700ld7gcnerfa7eys"
      ]
+    },
+    {
+     "id": "TG-NEW-01",
+     "pattern": "Ladder slides down a wall: from the change in its angle with the ground as the foot moves out, find the ladder length and the new height reached",
+     "sample": "A ladder leans against a wall at $60^\\circ$ to the ground. Its foot is pulled $2$ m further from the wall and it now makes $45^\\circ$ with the ground. Find the length of the ladder and how far its top slides down.",
+     "slot": "D",
+     "targets": {
+      "easy": 0,
+      "medium": 0,
+      "hard": 1
+     },
+     "figure": false,
+     "competency": false,
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2023 main"
+     ],
+     "existingIds": [],
+     "addedFromBoard": true
+    },
+    {
+     "id": "TG-NEW-02",
+     "pattern": "Assertion-reason: ladder against a wall, a length found by Pythagoras checked against a claimed angle with the ground",
+     "sample": "A: A ladder whose foot is $5$ m from a wall and whose top is $12$ m up the wall is $13$ m long. R: The ladder makes an angle of $45^\\circ$ with the ground.",
+     "slot": "A-AR",
+     "targets": {
+      "easy": 1,
+      "medium": 0,
+      "hard": 0
+     },
+     "figure": false,
+     "competency": false,
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2025 main"
+     ],
+     "existingIds": [],
+     "addedFromBoard": true
     }
    ]
   },
@@ -2193,7 +2317,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 7,
+     "seenOnBoard": 23,
      "seenIn": [
       "2018 main",
       "2019 compartment",
@@ -2214,7 +2338,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 14,
      "seenIn": [
       "2018 compartment",
       "2019 main",

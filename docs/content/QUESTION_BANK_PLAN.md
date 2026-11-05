@@ -4,23 +4,23 @@ Written 1 Nov 2026. Covers Standard (041) only. Basic (241) is out of scope here
 
 **Goal:** a bank that covers every kind of question the board asks, at the right difficulty, with enough depth for 20 non-repeating full board papers and regular chapter tests, and that records when each kind of question was asked.
 
-**Where things stand:** 708 live questions against a target of 1,318. **807 new questions are needed.** The list of what to write is done. The bank also needs figures, which it has none of, and a person has not yet read its questions.
+**Where things stand:** 708 live questions against a target of 1,327. **816 new questions are needed.** The list of what to write is done. The bank also needs figures, which it has none of, and a person has not yet read its questions.
 
 | File | What it holds |
 |---|---|
-| [question-patterns.md](question-patterns.md) | **The exhaustive list:** 1,288 kinds of question by chapter and topic, with difficulty targets, current count, years asked and a sample |
+| [question-patterns.md](question-patterns.md) | **The exhaustive list:** 1,299 kinds of question by chapter and topic, with difficulty targets, current count, years asked and a sample |
 | [question-bank-status.md](question-bank-status.md) | Topic and difficulty tables for every chapter: target, have, gap |
 | [question-patterns/](question-patterns/) | The same list as data, linked to real question ids. `_review.json` lists the corrections to make |
-| [board-history.json](board-history.json) | 1,887 tagged board questions from 56 papers (2011-2026), each linked to its question pattern |
+| [board-history.json](board-history.json) | 5,043 tagged board questions from 149 papers (2011-2026), each linked to its question pattern |
 
 Regenerate the tables at any time with `python3 scripts/qb-report.py`.
 
 ## 1. What the evidence shows
 
-**Papers used (one set per series, Standard):** 56 papers, 1,887 questions: 2011-2015, 2016 (2 series), 2017 (2), 2018, 2019 (5), 2020 (5), 2022-2026 main, the 2017-2019 and 2021-2025 compartment papers, and the 2026 second board exam. 2012 and 2014 are retyped copies (lower confidence). Every file and its source is cited in [PYQ_SOURCES.md](PYQ_SOURCES.md). Basic papers are downloaded but not tagged.
+**Papers used (every Standard set downloaded):** 149 papers, 5,043 questions: every English-Hindi Standard set we found for 2011-2026, main, compartment and the 2026 second board exam. Two visually-impaired papers (2021 and 2023 compartment) are left out. 2012 and 2014 are retyped copies (lower confidence). Every file and its source is cited in [PYQ_SOURCES.md](PYQ_SOURCES.md). Basic papers are downloaded but not tagged.
 Older papers use a different format (30-40 questions; SA-II papers before 2018 cover only part of the syllabus), so they show what kinds of question exist. The counts below use only the 26 papers from 2023 onward, which follow today's 38-question format.
 
-**History:** every board question is linked to one question pattern. Of the 1,180 active patterns, 816 have been asked at least once (659 since 2023) and 364 are syllabus-only so far.
+**History:** every board question is linked to one question pattern. Of the 1,177 patterns in syllabus topics, 878 have been asked at least once (749 since 2023) and 299 are syllabus-only so far.
 
 | Finding | Bank today | Board papers | What it means |
 |---|---|---|---|
@@ -39,7 +39,7 @@ Each chapter's target per slot is the larger of:
 - **Board demand:** average questions per paper × 20 papers, with extra for internal choice (B ×7/5, C ×8/6, D ×6/4).
 - **A floor for chapter tests:** 40 MCQ, 6 assertion-reason, 12 of 2 marks, 12 of 3 marks, 6 of 5 marks, 5 case studies.
 
-**These are my assumptions, and easy to change.** Twenty papers and these floors are a judgement call: lower them and the bank shrinks, and the report recalculates. Chapters could go 1-2 over per slot to keep distinct tasks separate, so the total is 1,318 rather than the calculated 1,241.
+**These are my assumptions, and easy to change.** Twenty papers and these floors are a judgement call: lower them and the bank shrinks, and the report recalculates. Chapters could go 1-2 over per slot to keep distinct tasks separate, so the total was 1,318 rather than the calculated 1,241.
 
 **Difficulty by slot (easy / medium / hard), set from the board with small allowance for practice:**
 
@@ -51,7 +51,7 @@ Each chapter's target per slot is the larger of:
 | Short, 3 marks | 5 / 75 / 20 | 222 | 128 (5 / 97 / 26) |
 | Long, 5 marks | 0 / 45 / 55 | 157 | 108 (0 / 44 / 64) |
 | Case study, 4 marks | 0 / 90 / 10 | 89 | 56 (0 / 47 / 9) |
-| **Total** | | **1,318** | **807 (220 / 458 / 129)** |
+| **Total** | | **1,327** | **816 (223 / 463 / 130)** |
 
 **Difficulty rule:** easy is one step or a direct formula. Medium is 2-3 steps or a standard combination. Hard is several ideas together, a set-up that isn't obvious, or a long multi-part solution.
 
@@ -72,9 +72,9 @@ Each chapter's target per slot is the larger of:
 | Surface Areas and Volumes | 104 | 98 | 25 / 60 / 13 | 54 | 54 | 12 / 31 / 11 | 25 |
 | Statistics | 96 | 99 | 26 / 56 / 17 | 54 | 62 | 18 / 32 / 12 | 1 |
 | Probability | 87 | 87 | 27 / 51 / 9 | 54 | 50 | 15 / 30 / 5 | 4 |
-| **Total** | **1,288** | **1,318** | **370 / 777 / 171** | **705** | **807** | **220 / 458 / 129** | **217** |
+| **Total** | **1,299** | **1,327** | **373 / 782 / 172** | **705** | **816** | **223 / 463 / 130** | **218** |
 
-"Have" counts 705 because 3 of the 708 live questions are marked out of scope. Of those 705, 45 sit in question types with no target until the syllabus is checked, and others are over their type's target. They stay in the bank but don't reduce the gap, so the finished bank will hold more than 1,318. Topic-level tables are in [question-bank-status.md](question-bank-status.md).
+"Have" counts 705 because 3 of the 708 live questions are marked out of scope. Of those 705, 45 sit in question types with no target until the syllabus is checked, and others are over their type's target. They stay in the bank but don't reduce the gap, so the finished bank will hold more than 1,318. Topic-level tables are in [question-bank-status.md](question-bank-status.md); per-chapter rows above may lag it by a question or two after the round-2 tagging (11 new types added).
 
 ## 3. Phases
 
@@ -132,7 +132,7 @@ All of the below is in the app, except that internal choices are picked when a p
 
 **Done when:** a sample question of each kind can be stored, generated, printed and marked.
 
-### Phase 3: write the 807 questions in waves
+### Phase 3: write the 816 questions in waves
 Each wave writes from [question-patterns.md](question-patterns.md), one chapter at a time, using each pattern's target and difficulty.
 
 | Wave | What | Questions | MCQ / AR / 2 / 3 / 5 / case |
@@ -152,7 +152,7 @@ Figure drawing is its own job: each figure drawn as SVG from the question's data
 5. Difficulty checked by a second reader against the rule in section 2.
 6. **Read by a maths teacher.** Every 5-mark, case-study and flagged question, plus a random 20% of each chapter's rest. If that sample shows errors above about 2%, read the rest of that chapter.
 
-Reading all 807 in full is about 40 hours (my rough estimate). The sampling above reduces this substantially.
+Reading all 816 in full is about 40 hours (my rough estimate). The sampling above reduces this substantially.
 
 **Done when:** imported as drafts, approved by a person, and the report shows the wave's gap closed.
 
@@ -191,7 +191,7 @@ You asked to store where a question has been used. It needs two separate ideas, 
 ## 5. Decisions for you
 
 1. **Syllabus:** download the official PDF, or tick the table in Phase 0.
-2. **Size:** is 20 non-repeating papers the right depth? It drives the 1,318.
+2. **Size:** is 20 non-repeating papers the right depth? It drives the 1,327.
 3. **Reviewer:** who reads the questions, and is the sampling rule acceptable?
 4. **Real board wording:** tags and history only for now (recommended), or get advice on using the text?
 5. **Basic (241) history:** 102 Basic papers are downloaded; tag them when Basic is in scope.

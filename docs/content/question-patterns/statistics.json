@@ -73,7 +73,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2020 main"
      ],
@@ -123,7 +123,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2020 main",
       "2022 main"
@@ -162,7 +162,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 18,
      "seenIn": [
       "2019 main",
       "2022 main",
@@ -186,7 +186,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2022 main"
      ],
@@ -204,7 +204,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
       "2019 main",
       "2020 main"
@@ -318,8 +318,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2022 main"
+     ],
      "existingIds": [
       "cmvqhe97300ct7gd0hc30xfid",
       "cmvqhe97400cv7gd0e2hvgpjr"
@@ -337,7 +339,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2018 main",
       "2022 main"
@@ -376,8 +378,10 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2025 main"
+     ],
      "existingIds": [
       "d5",
       "cmvq9r2jm00et7gcnkwx7xdea"
@@ -474,7 +478,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 19,
      "seenIn": [
       "2019 main",
       "2020 main",
@@ -514,7 +518,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 9,
      "seenIn": [
       "2019 compartment",
       "2019 main"
@@ -561,8 +565,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2026 second"
+     ],
      "existingIds": [
       "cmvq9r2jk00ej7gcnyu61oq97",
       "cmvqhe96z00cd7gd0zjexx0xg"
@@ -632,7 +638,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2022 compartment",
       "2022 main"
@@ -651,7 +657,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2022 main"
      ],
@@ -669,8 +675,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 4,
+     "seenIn": [
+      "2020 main",
+      "2022 compartment",
+      "2022 main"
+     ],
      "existingIds": [
       "cmvqhe97500d17gd01jdzkfo3"
      ]
@@ -705,12 +715,14 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 4,
+     "seenOnBoard": 15,
      "seenIn": [
       "2018 main",
       "2019 compartment",
+      "2019 main",
       "2020 main",
-      "2022 main"
+      "2022 main",
+      "2024 main"
      ],
      "existingIds": []
     },
@@ -726,7 +738,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2022 main"
      ],
@@ -744,7 +756,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 compartment"
      ],
@@ -782,7 +794,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 7,
+     "seenOnBoard": 16,
      "seenIn": [
       "2019 main",
       "2024 compartment",
@@ -826,9 +838,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
-      "2025 main"
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": []
     },
@@ -844,9 +857,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
-      "2023 main"
+      "2023 main",
+      "2026 main"
      ],
      "existingIds": []
     },
@@ -862,11 +876,31 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2022 main"
      ],
      "existingIds": []
+    },
+    {
+     "id": "ST-NEW-02",
+     "pattern": "Two unknown frequencies from a given mode and the total",
+     "sample": "Classes $0$-$10$, $10$-$20$, $20$-$30$, $30$-$40$, $40$-$50$ have frequencies $5$, $x$, $15$, $y$, $6$ with total $41$ and mode $26$. Find $x$ and $y$. ($26=20+\\frac{15-x}{30-x-y}\\cdot10$ with $x+y=15$ gives $x=6$, $y=9$)",
+     "slot": "D",
+     "targets": {
+      "easy": 0,
+      "medium": 1,
+      "hard": 0
+     },
+     "figure": false,
+     "competency": false,
+     "seenOnBoard": 2,
+     "seenIn": [
+      "2023 main",
+      "2024 compartment"
+     ],
+     "existingIds": [],
+     "addedFromBoard": true
     }
    ]
   },
@@ -887,7 +921,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 6,
+     "seenOnBoard": 18,
      "seenIn": [
       "2020 main",
       "2023 compartment",
@@ -912,8 +946,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 7,
      "seenIn": [
+      "2023 main",
+      "2024 main",
+      "2025 main",
       "2026 main"
      ],
      "existingIds": [
@@ -932,8 +969,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
+      "2025 main",
       "2026 main"
      ],
      "existingIds": [
@@ -970,7 +1008,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2024 main"
      ],
@@ -990,7 +1028,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -1008,7 +1046,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -1045,7 +1083,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 second"
      ],
@@ -1160,7 +1198,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
       "2023 main"
      ],
@@ -1178,7 +1216,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -1212,7 +1250,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2022 compartment"
      ],
@@ -1248,8 +1286,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 0,
-     "seenIn": [],
+     "seenOnBoard": 1,
+     "seenIn": [
+      "2026 main"
+     ],
      "existingIds": []
     },
     {
@@ -1287,7 +1327,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2023 main"
      ],
@@ -1305,7 +1345,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1323,7 +1363,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1341,7 +1381,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2024 main",
       "2025 main"
@@ -1360,11 +1400,12 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 3,
+     "seenOnBoard": 10,
      "seenIn": [
       "2020 main",
       "2024 main",
-      "2025 main"
+      "2025 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -1380,9 +1421,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
-      "2024 main"
+      "2024 main",
+      "2025 main"
      ],
      "existingIds": []
     },
@@ -1398,7 +1440,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2025 main"
      ],
@@ -1434,8 +1476,9 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
+      "2020 main",
       "2021 compartment"
      ],
      "existingIds": [],
@@ -1460,9 +1503,10 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 3,
      "seenIn": [
       "2020 main",
+      "2023 main",
       "2026 second"
      ],
      "existingIds": []
@@ -1495,7 +1539,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2026 second"
      ],
@@ -1513,10 +1557,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 9,
      "seenIn": [
       "2018 compartment",
-      "2025 main"
+      "2025 main",
+      "2026 main"
      ],
      "existingIds": []
     },
@@ -1532,7 +1577,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 4,
+     "seenOnBoard": 12,
      "seenIn": [
       "2023 compartment",
       "2024 main",
@@ -1553,9 +1598,11 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 4,
      "seenIn": [
-      "2023 main"
+      "2023 main",
+      "2025 main",
+      "2026 second"
      ],
      "existingIds": []
     },
@@ -1571,7 +1618,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2026 main"
      ],
@@ -1589,7 +1636,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 1,
+     "seenOnBoard": 2,
      "seenIn": [
       "2025 main"
      ],
@@ -1623,7 +1670,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 3,
+     "seenOnBoard": 9,
      "seenIn": [
       "2023 main",
       "2024 main",
@@ -1647,7 +1694,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 6,
      "seenIn": [
       "2024 main",
       "2026 second"
@@ -1666,7 +1713,7 @@
      },
      "figure": true,
      "competency": true,
-     "seenOnBoard": 1,
+     "seenOnBoard": 3,
      "seenIn": [
       "2024 main"
      ],
@@ -1684,7 +1731,7 @@
      },
      "figure": false,
      "competency": true,
-     "seenOnBoard": 2,
+     "seenOnBoard": 4,
      "seenIn": [
       "2021 compartment",
       "2022 compartment"
@@ -1710,7 +1757,7 @@
      },
      "figure": false,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2020 main",
       "2026 main"
@@ -1787,7 +1834,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 7,
      "seenIn": [
       "2018 compartment",
       "2019 main"
@@ -1806,7 +1853,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 5,
      "seenIn": [
       "2019 main",
       "2020 main"
@@ -1825,7 +1872,7 @@
      },
      "figure": true,
      "competency": false,
-     "seenOnBoard": 2,
+     "seenOnBoard": 8,
      "seenIn": [
       "2020 main"
      ],
