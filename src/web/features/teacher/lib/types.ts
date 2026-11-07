@@ -7,7 +7,7 @@ export type Subject = { id: string; name: string; label: string; patterns: Patte
 export type Question = {
   id: string; section: string; chapter: string; topic: string; type: string; complexity: string;
   text: string; options?: (string | number)[]; marks: number; answer?: string;
-  figureSvg?: string; figureAlt?: string; askedIn?: string[];
+  figureSvg?: string; figureAlt?: string; askedIn?: string[]; draft?: boolean;
   parts?: { label: string; marks: number; text: string; answer?: string }[];
   markingSteps?: { step: string; marks: number }[];
   /** The OR alternative, when this question offers an internal choice. */

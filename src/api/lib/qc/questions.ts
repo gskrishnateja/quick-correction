@@ -19,6 +19,8 @@ export type Question = {
   marks: number;
   figureSvg?: string;
   figureAlt?: string;
+  /** An AI-written question no teacher has approved yet. */
+  draft?: boolean;
   /** Case study parts. `answer` is only present when asked for. */
   parts?: { label: string; marks: number; text: string; answer?: string }[];
   /** Board papers where this kind of question appeared: "2025 main". */
@@ -71,6 +73,7 @@ export async function questionsByIds(
       marks: r.marks,
       figureSvg: r.figureSvg ?? undefined,
       figureAlt: r.figureAlt ?? undefined,
+      ...(r.reviewStatus === 'draft' && !r.isActive ? { draft: true } : {}),
       askedIn: (r.pattern?.seenIn as string[] | undefined) ?? [],
       // Answers stay on the server unless marking or the teacher asks for them.
       parts: parts ? parts.map(({ answer, ...p }) => (opts.withAnswers ? { ...p, answer } : p)) : undefined,

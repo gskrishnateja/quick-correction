@@ -97,7 +97,7 @@ export type Generated = {
   missing: number;
 };
 
-export async function generatePaper(input: { patternId: string; chapterIds?: string[]; variant?: number; targetMarks?: number; avoidIds?: string[] }): Promise<Generated> {
+export async function generatePaper(input: { patternId: string; chapterIds?: string[]; variant?: number; targetMarks?: number; avoidIds?: string[]; includeDrafts?: boolean }): Promise<Generated> {
   const db = await databaseClass.get();
   const pattern = await db.paperPattern.findUnique({ where: { id: input.patternId } });
   if (!pattern || !pattern.isActive) throw error.badRequest('Pick one of the available paper patterns');
@@ -111,7 +111,11 @@ export async function generatePaper(input: { patternId: string; chapterIds?: str
   const topics = await db.curriculumNode.findMany({ where: { parentId: { in: wanted.map((c: any) => c.id) }, kind: 'topic', isActive: true } });
   const chapterOf = new Map<string, string>(topics.map((t: any) => [t.id, t.parentId]));
   const pool: Q[] = (await db.question.findMany({
-    where: { isActive: true, topicId: { in: topics.map((t: any) => t.id) } },
+    where: {
+      topicId: { in: topics.map((t: any) => t.id) },
+      // Drafts are AI-written questions a teacher has not approved yet. Faculty can opt in to see them.
+      ...(input.includeDrafts ? { OR: [{ isActive: true }, { reviewStatus: 'draft' }] } : { isActive: true }),
+    },
     include: { pattern: { select: { scope: true, targetEasy: true, targetMedium: true, targetHard: true } } },
   })).map((q: any) => ({
     id: q.id, type: q.type, marks: q.marks, topicId: q.topicId, chapterId: chapterOf.get(q.topicId) ?? '', complexity: q.complexity, hasAnswer: !!q.answer,

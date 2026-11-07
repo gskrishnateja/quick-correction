@@ -11,6 +11,7 @@ export function homeFor(user: Pick<User, 'role' | 'appRole' | 'appStatus'> | nul
   if (user?.role === 'admin') return '/admin';
   if (user?.appRole === 'teacher' && user.appStatus && user.appStatus !== 'active') return '/auth/pending';
   if (user?.appRole === 'teacher') return '/teacher';
+  if (user?.appRole === 'faculty') return '/faculty';
   if (user?.appRole === 'parent') return '/parent';
   return config.auth.redirects.afterLogin;
 }

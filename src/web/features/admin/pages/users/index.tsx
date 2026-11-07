@@ -28,8 +28,8 @@ type Person = {
   name: string | null;
   email: string;
   phone: string | null;
-  kind: 'teacher' | 'parent' | 'admin' | 'other';
-  appRole: 'teacher' | 'parent' | null;
+  kind: 'teacher' | 'parent' | 'faculty' | 'admin' | 'other';
+  appRole: 'teacher' | 'parent' | 'faculty' | null;
   appStatus: 'active' | 'pending' | 'rejected';
   isActive: boolean;
   lastLogin: string | null;
@@ -38,8 +38,8 @@ type Person = {
   childCount: number;
 };
 
-type Counts = { pending: number; teachers: number; parents: number; admins: number; all: number };
-type Tab = 'pending' | 'teacher' | 'parent' | 'admin' | 'all';
+type Counts = { pending: number; teachers: number; parents: number; faculty: number; admins: number; all: number };
+type Tab = 'pending' | 'teacher' | 'faculty' | 'parent' | 'admin' | 'all';
 
 const BLANK = { name: '', email: '', phone: '', appRole: 'teacher', password: '' };
 
@@ -58,10 +58,10 @@ export default function AdminUsersPage() {
   const confirm = useConfirm();
   const { user: me } = useAuth();
   const [params] = useSearchParams();
-  const [tab, setTab] = React.useState<Tab>(() => (['pending', 'teacher', 'parent', 'admin'] as Tab[]).find((t) => t === params.get('tab')) ?? 'all');
+  const [tab, setTab] = React.useState<Tab>(() => (['pending', 'teacher', 'faculty', 'parent', 'admin'] as Tab[]).find((t) => t === params.get('tab')) ?? 'all');
   const [q, setQ] = React.useState('');
   const [people, setPeople] = React.useState<Person[] | null>(null);
-  const [counts, setCounts] = React.useState<Counts>({ pending: 0, teachers: 0, parents: 0, admins: 0, all: 0 });
+  const [counts, setCounts] = React.useState<Counts>({ pending: 0, teachers: 0, parents: 0, faculty: 0, admins: 0, all: 0 });
   const [loadError, setLoadError] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState<string | null>(null);
 
@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
     try {
       const query: Record<string, string> = {};
       if (tab === 'pending') { query.kind = 'teacher'; query.status = 'pending'; }
-      if (tab === 'teacher' || tab === 'parent' || tab === 'admin') query.kind = tab;
+      if (tab === 'teacher' || tab === 'faculty' || tab === 'parent' || tab === 'admin') query.kind = tab;
       if (q.trim()) query.q = q.trim();
       const data = await api.get<{ people: Person[]; counts: Counts }>('/api/people', { query });
       setPeople(data.people);
@@ -174,6 +174,7 @@ export default function AdminUsersPage() {
     { id: 'all', label: 'All', count: counts.all },
     { id: 'pending', label: 'Pending approval', count: counts.pending },
     { id: 'teacher', label: 'Teachers', count: counts.teachers },
+    { id: 'faculty', label: 'Faculty', count: counts.faculty },
     { id: 'parent', label: 'Parents', count: counts.parents },
     { id: 'admin', label: 'Admins', count: counts.admins },
   ];
@@ -195,7 +196,7 @@ export default function AdminUsersPage() {
                       <X className="size-4" /> <span className="hidden xl:inline">Reject</span>
                     </Button>
                   )}
-                  {p.isActive && (p.kind === 'teacher' || p.kind === 'parent') && (
+                  {p.isActive && (p.kind === 'teacher' || p.kind === 'faculty' || p.kind === 'parent') && (
                     <Button variant="ghost" size="icon" aria-label={`Sign in as ${p.email}`} title="Sign in as this person" onClick={() => signInAs(p)}>
                       <LogIn className="size-4" />
                     </Button>
@@ -225,7 +226,7 @@ export default function AdminUsersPage() {
 
       <AdminPageHeader
         title="Users"
-        description="Teachers, parents and admins. Approve sign-ups and manage logins."
+        description="Teachers, faculty, parents and admins. Approve sign-ups and manage logins."
         actions={
           <Button onClick={() => { setForm(BLANK); setFormError(null); setCreating(true); }}>
             <Plus className="size-4" /> Add user
@@ -370,6 +371,7 @@ export default function AdminUsersPage() {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="teacher">Teacher</SelectItem>
+                    <SelectItem value="faculty">Faculty</SelectItem>
                     <SelectItem value="parent">Parent</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                   </SelectContent>

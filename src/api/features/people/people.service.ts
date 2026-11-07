@@ -16,7 +16,7 @@ import { toPublicUser } from '../auth/auth.service.js';
 const error = errorClass.get();
 const auth = authClass.get();
 
-export type PersonRole = 'teacher' | 'parent';
+export type PersonRole = 'teacher' | 'parent' | 'faculty';
 export type PersonStatus = 'active' | 'pending' | 'rejected';
 
 const SELECT = {
@@ -27,7 +27,7 @@ const SELECT = {
 
 /** Which kind of account this is: teachers and parents by app role, admins by login role. */
 const kindOf = (u: { appRole: string | null; role: string }) =>
-  u.appRole === 'teacher' ? 'teacher' : u.appRole === 'parent' ? 'parent' : u.role === 'admin' ? 'admin' : 'other';
+  u.appRole === 'teacher' ? 'teacher' : u.appRole === 'parent' ? 'parent' : u.appRole === 'faculty' ? 'faculty' : u.role === 'admin' ? 'admin' : 'other';
 
 function shape(u: any) {
   const { _count, role, ...rest } = u;
@@ -48,27 +48,28 @@ export const peopleService = {
   async list(filters: { kind?: string; status?: string; q?: string }) {
     const db = await databaseClass.get();
     const where: any = {};
-    if (filters.kind === 'teacher' || filters.kind === 'parent') where.appRole = filters.kind;
+    if (filters.kind === 'teacher' || filters.kind === 'parent' || filters.kind === 'faculty') where.appRole = filters.kind;
     if (filters.kind === 'admin') where.role = 'admin';
     if (filters.status) where.appStatus = filters.status;
     const q = filters.q?.trim();
     if (q) where.OR = [{ name: { contains: q } }, { email: { contains: q } }];
 
-    const [rows, pending, teachers, parents, admins, all] = await Promise.all([
+    const [rows, pending, teachers, parents, faculty, admins, all] = await Promise.all([
       db.user.findMany({ where, select: SELECT, orderBy: [{ createdAt: 'desc' }] }),
       db.user.count({ where: { appRole: 'teacher', appStatus: 'pending' } }),
       db.user.count({ where: { appRole: 'teacher' } }),
       db.user.count({ where: { appRole: 'parent' } }),
+      db.user.count({ where: { appRole: 'faculty' } }),
       db.user.count({ where: { role: 'admin' } }),
       db.user.count(),
     ]);
-    return { people: rows.map(shape), counts: { pending, teachers, parents, admins, all } };
+    return { people: rows.map(shape), counts: { pending, teachers, parents, faculty, admins, all } };
   },
 
   async create(actorId: string, data: { name?: string; email?: string; phone?: string; appRole?: string; password?: string }) {
     const email = data.email?.trim().toLowerCase();
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw error.badRequest('A valid email is required');
-    if (data.appRole !== 'teacher' && data.appRole !== 'parent' && data.appRole !== 'admin') throw error.badRequest('Choose teacher, parent or admin');
+    if (data.appRole !== 'teacher' && data.appRole !== 'parent' && data.appRole !== 'faculty' && data.appRole !== 'admin') throw error.badRequest('Choose teacher, faculty, parent or admin');
     if (data.password && data.password.length < 8) throw error.badRequest('Password must be at least 8 characters');
 
     const db = await databaseClass.get();

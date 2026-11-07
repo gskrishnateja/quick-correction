@@ -1,13 +1,14 @@
 /**
- * Quick Correction's two sides. An account is a 'teacher' or a 'parent'
- * (User.appRole), chosen on first sign-in. Route guards read it from the
+ * Quick Correction's sides. An account is a 'teacher' or a 'parent'
+ * (User.appRole), chosen on first sign-in, or a 'faculty' member, which only an
+ * admin can create (faculty set and download board-format papers). Route guards read it from the
  * database rather than the JWT, so switching takes effect immediately.
  */
 import { databaseClass } from '@bloomneo/appkit/database';
 import { authClass } from '@bloomneo/appkit/auth';
 import { errorClass } from '@bloomneo/appkit/error';
 
-export type AppRole = 'teacher' | 'parent';
+export type AppRole = 'teacher' | 'parent' | 'faculty';
 
 const auth = authClass.get();
 const error = errorClass.get();
