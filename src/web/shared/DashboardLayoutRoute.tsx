@@ -20,7 +20,10 @@ import {
   DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   Tooltip, TooltipTrigger, TooltipContent,
 } from '@bloomneo/uikit';
-import { LogOut, Menu, ChevronDown, PanelLeft } from 'lucide-react';
+import {
+  LogOut, Menu, ChevronDown, ChevronRight, PanelLeft,
+  Home, Layers, Users, MoreHorizontal, ScrollText, Settings, User as UserIcon,
+} from 'lucide-react';
 import { brand } from './brand';
 import { LogoMark } from './Logo';
 import { ThemeControls } from './ThemeControls';
@@ -77,25 +80,21 @@ function useSidebarCollapsed() {
   return { collapsed, toggle };
 }
 
-/**
- * h-14 matches the main header exactly, so the divider under the logo
- * continues the one under the topbar as a single unbroken line. This was
- * `py-4`, which made the block 65px against the header's 56px — a 9px step
- * visible all the way down the screen.
- */
+/** Brand block. h-16 matches the top bar so the two dividers line up. */
 function SidebarBrand({ collapsed }: { collapsed?: boolean }) {
   return (
     <Link
-      to="/dashboard"
+      to="/admin"
       className={[
-        'flex h-14 items-center border-b border-sidebar-border',
-        collapsed ? 'justify-center px-0' : 'gap-2.5 px-4',
+        'flex h-16 shrink-0 items-center',
+        collapsed ? 'justify-center px-0' : 'gap-2.5 px-5',
       ].join(' ')}
     >
       <LogoMark className="size-8 shrink-0" />
       {!collapsed && (
-        <span className="truncate font-semibold tracking-tight text-sidebar-foreground">
-          {brand.name}
+        <span className="min-w-0 leading-tight">
+          <span className="block truncate text-[15px] font-semibold tracking-tight text-sidebar-foreground">{brand.name}</span>
+          <span className="block text-[11px] font-medium text-sidebar-foreground/50">Admin console</span>
         </span>
       )}
     </Link>
@@ -105,22 +104,10 @@ function SidebarBrand({ collapsed }: { collapsed?: boolean }) {
 /**
  * One row of the sidebar.
  *
- * When collapsed the label is removed from the DOM rather than hidden with
- * CSS, so it cannot be read out twice — the Tooltip carries the accessible
- * name instead. `title` is deliberately not used: it duplicates the tooltip
- * and appears after a browser-controlled delay nobody can style.
- *
- * ── Why className is a string, never NavLink's ({ isActive }) => … form ──
- * Collapsed, this row is wrapped in <TooltipTrigger asChild>, and Radix's Slot
- * merges props by CONCATENATING className values. A function does not survive
- * that: it is stringified, so the anchor renders
- *   class="({ isActive })=>[ 'flex items-center …"
- * and not one class matches. The row loses `flex`, the icon sits flush-left,
- * and every collapsed icon is 12px off the rail's centre.
- *
- * Nothing throws and nothing type-errors — the failure is purely visual, and
- * only in the collapsed state, which is why it survived so long. useMatch gives
- * the same active flag without handing a function to Slot.
+ * Collapsed, the label leaves the DOM and the Tooltip carries the name.
+ * className stays a STRING (never NavLink's function form): Radix Slot
+ * concatenates className, and a function would be stringified into junk.
+ * useMatch gives the active flag instead.
  */
 function NavRow({
   to, label, icon: Icon, end, collapsed, onNavigate,
@@ -141,15 +128,18 @@ function NavRow({
       onClick={onNavigate}
       aria-label={collapsed ? label : undefined}
       className={[
-        'flex items-center rounded-md py-2 text-sm transition-colors',
+        'group relative flex h-9 items-center rounded-lg text-sm transition-colors',
         collapsed ? 'w-full justify-center px-0' : 'gap-3 px-3',
         isActive
-          ? 'bg-sidebar-primary font-medium text-sidebar-primary-foreground'
-          : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+          ? 'bg-primary/10 font-medium text-primary'
+          : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground',
       ].join(' ')}
     >
-      <Icon className="size-4 shrink-0" />
-      {!collapsed && label}
+      {isActive && !collapsed && (
+        <span aria-hidden className="absolute inset-y-2 -left-3 w-[3px] rounded-r-full bg-primary" />
+      )}
+      <Icon className={`size-[18px] shrink-0 ${isActive ? 'text-primary' : 'text-sidebar-foreground/55 group-hover:text-sidebar-foreground'}`} />
+      {!collapsed && <span className="truncate">{label}</span>}
     </NavLink>
   );
 
@@ -162,67 +152,171 @@ function NavRow({
   );
 }
 
+function initialsOf(name?: string | null, email?: string | null) {
+  const src = (name || email || 'U').trim();
+  const parts = src.split(/[\s@._-]+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? 'U') + (parts[1]?.[0] ?? '')).toUpperCase();
+}
+
+function roleLabel(role?: string, level?: string) {
+  if (role === 'admin') return level === 'system' ? 'System admin' : 'Administrator';
+  return 'Member';
+}
+
+function Avatar({ initials, className = '' }: { initials: string; className?: string }) {
+  return (
+    <span className={`grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-semibold text-primary-foreground ring-2 ring-background ${className}`}>
+      {initials}
+    </span>
+  );
+}
+
 function SidebarNav({
   collapsed, onNavigate,
 }: { collapsed?: boolean; onNavigate?: () => void }) {
   const { logout, user } = useAuth();
   const visible = NAV.filter((item) => (!item.role || item.role === user?.role) && !(user?.role && item.hideForRoles?.includes(user.role)));
+  const initials = initialsOf(user?.name, user?.email);
 
   const signOut = (
     <button
       onClick={() => logout()}
-      aria-label={collapsed ? 'Sign out' : undefined}
-      className={[
-        'flex w-full cursor-pointer items-center rounded-md py-2 text-sm text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-        collapsed ? 'justify-center px-0' : 'gap-3 px-3',
-      ].join(' ')}
+      aria-label="Sign out"
+      className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
     >
-      <LogOut className="size-4 shrink-0" />
-      {!collapsed && 'Sign out'}
+      <LogOut className="size-4" />
     </button>
   );
 
   return (
-    <div className="flex h-[calc(100%-3.5rem)] flex-col">
-      <nav className="flex flex-col gap-1 p-3" aria-label="Dashboard">
-        {visible.map(({ to, label, icon: Icon, end, section }) => (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <nav className={`flex flex-1 flex-col gap-0.5 overflow-y-auto pb-3 ${collapsed ? 'px-3' : 'px-4'}`} aria-label="Main">
+        {visible.map(({ to, label, icon: Icon, end, section }, i) => (
           <React.Fragment key={to}>
             {section && !collapsed && (
-              <span className="mt-4 px-3 pb-1 text-[11px] font-medium uppercase tracking-wider text-sidebar-foreground/45">
+              <span className={`${i === 0 ? 'mt-1' : 'mt-5'} px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-sidebar-foreground/40`}>
                 {section}
               </span>
             )}
-            {/* Collapsed, the heading becomes a hairline: the grouping stays
-                legible without a label there is no room for. */}
-            {section && collapsed && (
-              <span aria-hidden className="mx-2 mt-3 mb-1 border-t border-sidebar-border" />
+            {section && collapsed && i > 0 && (
+              <span aria-hidden className="mx-2 my-2 border-t border-sidebar-border" />
             )}
-            <NavRow
-              to={to}
-              label={label}
-              icon={Icon}
-              end={end}
-              collapsed={collapsed}
-              onNavigate={onNavigate}
-            />
+            <NavRow to={to} label={label} icon={Icon} end={end} collapsed={collapsed} onNavigate={onNavigate} />
           </React.Fragment>
         ))}
       </nav>
 
-      {/* Sign out sits at the bottom, away from navigation — it is a different
-          kind of action and should not be one slip from "Users". */}
-      <div className="mt-auto border-t border-sidebar-border p-3">
+      {/* Who is signed in, and the way out. Kept apart from navigation so
+          signing out is never one slip from "Users". */}
+      <div className="border-t border-sidebar-border p-3">
         {collapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>{signOut}</TooltipTrigger>
-            <TooltipContent side="right">Sign out</TooltipContent>
-          </Tooltip>
+          <div className="flex flex-col items-center gap-2">
+            <Avatar initials={initials} className="size-8 text-xs" />
+            <Tooltip>
+              <TooltipTrigger asChild>{signOut}</TooltipTrigger>
+              <TooltipContent side="right">Sign out</TooltipContent>
+            </Tooltip>
+          </div>
         ) : (
-          signOut
+          <div className="flex items-center gap-3 rounded-xl px-2 py-1.5">
+            <Avatar initials={initials} className="size-9 text-xs" />
+            <span className="min-w-0 flex-1 leading-tight">
+              <span className="block truncate text-sm font-medium text-sidebar-foreground">{user?.name || user?.email}</span>
+              <span className="block truncate text-xs text-sidebar-foreground/50">{roleLabel(user?.role, user?.level)}</span>
+            </span>
+            {signOut}
+          </div>
         )}
       </div>
     </div>
   );
+}
+
+/*
+ * Phones get a floating tab bar instead of a hamburger: the four places an
+ * admin goes most sit one thumb-tap away, everything else is under "More".
+ * Matches the Quick Correction Journeys mock-up.
+ */
+const MOBILE_TABS = [
+  { to: '/admin', label: 'Overview', icon: Home, end: true },
+  { to: '/admin/content', label: 'Content', icon: Layers, end: false },
+  { to: '/admin/users', label: 'Users', icon: Users, end: false },
+] as const;
+
+function MobileTab({ to, label, icon: Icon, end }: { to: string; label: string; icon: React.ComponentType<{ className?: string }>; end: boolean }) {
+  const active = Boolean(useMatch({ path: to, end }));
+  return (
+    <NavLink
+      to={to}
+      end={end}
+      className={`flex h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-[18px] text-[11px] font-semibold transition-colors ${active ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+    >
+      <Icon className="size-5" />
+      {label}
+    </NavLink>
+  );
+}
+
+function MobileTabBar() {
+  const { logout } = useAuth();
+  const [open, setOpen] = React.useState(false);
+  const { pathname } = useLocation();
+  React.useEffect(() => setOpen(false), [pathname]);
+  const inMore = MORE_ITEMS.some((m) => pathname.startsWith(m.to));
+
+  return (
+    <nav
+      aria-label="Admin"
+      className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex h-[66px] items-center gap-1 rounded-[26px] border border-white/60 bg-background/85 px-2 shadow-[0_16px_34px_-12px_rgba(15,23,51,0.3)] backdrop-blur-xl dark:border-border lg:hidden"
+    >
+      {MOBILE_TABS.map((t) => <MobileTab key={t.to} {...t} />)}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            className={`flex h-[52px] flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-[18px] text-[11px] font-semibold transition-colors ${inMore || open ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+          >
+            <MoreHorizontal className="size-5" />
+            More
+          </button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="rounded-t-3xl px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
+          <span aria-hidden className="mx-auto mb-3 block h-1 w-10 rounded-full bg-muted-foreground/25" />
+          <ul className="grid gap-1">
+            {MORE_ITEMS.map(({ to, label, icon: Icon }) => (
+              <li key={to}>
+                <Link to={to} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium hover:bg-muted">
+                  <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary"><Icon className="size-[18px]" /></span>
+                  {label}
+                  <ChevronRight className="ml-auto size-4 text-muted-foreground" />
+                </Link>
+              </li>
+            ))}
+            <li className="mt-1 border-t border-border pt-2">
+              <button type="button" onClick={() => logout()} className="flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-destructive hover:bg-destructive/10">
+                <span className="grid size-10 place-items-center rounded-xl bg-destructive/10"><LogOut className="size-[18px]" /></span>
+                Sign out
+              </button>
+            </li>
+          </ul>
+        </SheetContent>
+      </Sheet>
+    </nav>
+  );
+}
+
+const MORE_ITEMS = [
+  { to: '/admin/audit', label: 'Audit log', icon: ScrollText },
+  { to: '/admin/settings', label: 'Settings', icon: Settings },
+  { to: '/dashboard/profile', label: 'Profile', icon: UserIcon },
+] as const;
+
+/** The page's name for the top bar, from the nav entry it sits under. */
+function usePageTitle(pathname: string) {
+  const match = [...NAV]
+    .sort((a, b) => b.to.length - a.to.length)
+    .find((n) => (n.end ? pathname === n.to : pathname === n.to || pathname.startsWith(n.to + '/')));
+  return match?.label ?? '';
 }
 
 export function Shell() {
@@ -230,47 +324,39 @@ export function Shell() {
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const { collapsed, toggle } = useSidebarCollapsed();
+  const title = usePageTitle(pathname);
+  const isAdminArea = pathname.startsWith('/admin');
+  const area = isAdminArea ? 'Admin' : 'Dashboard';
 
-  // The shell persists across navigation, so this would otherwise stay open
-  // behind the new page.
+  // The shell persists across navigation, so this would otherwise stay open.
   React.useEffect(() => setMobileOpen(false), [pathname]);
 
-  const initials = (user?.name ?? user?.email ?? 'U').slice(0, 2).toUpperCase();
+  const initials = initialsOf(user?.name, user?.email);
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      {/*
-        * Width is the only thing that changes on collapse, and it transitions —
-        * an instant jump reads as a layout bug rather than a deliberate move.
-        * The main column is flex-1, so it reflows on its own with no second
-        * measurement and nothing to keep in sync.
-        */}
+    <div className="flex min-h-screen bg-muted/40 text-foreground dark:bg-background">
+      {/* Width is the only thing that changes on collapse, and it transitions. */}
       <aside
         className={[
           'hidden shrink-0 border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-out lg:block',
-          collapsed ? 'w-16' : 'w-60',
+          collapsed ? 'w-[72px]' : 'w-64',
         ].join(' ')}
       >
-        <div className="sticky top-0 h-screen">
+        <div className="sticky top-0 flex h-screen flex-col">
           <SidebarBrand collapsed={collapsed} />
           <SidebarNav collapsed={collapsed} />
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur">
-          {/* Below lg the sidebar is a Sheet, so the same corner carries the
-              hamburger. Only one of these two is ever visible. */}
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-border/70 bg-background/80 px-4 backdrop-blur-md md:px-6">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open navigation" className="size-8 lg:hidden">
+              <Button variant="ghost" size="icon" aria-label="Open navigation" className={`size-9 lg:hidden ${isAdminArea ? 'hidden' : ''}`}>
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 bg-sidebar p-0">
-              {/* Never collapsed: on a phone the sidebar is already a modal
-                  the user opened on purpose, and a rail of unlabelled icons
-                  would be strictly worse than the list they asked for. */}
+            <SheetContent side="left" className="flex w-72 flex-col bg-sidebar p-0">
               <SidebarBrand />
               <SidebarNav onNavigate={() => setMobileOpen(false)} />
             </SheetContent>
@@ -284,35 +370,40 @@ export function Shell() {
                 onClick={toggle}
                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 aria-pressed={collapsed}
-                className="hidden size-8 lg:inline-flex"
+                className="hidden size-9 text-muted-foreground lg:inline-flex"
               >
-                <PanelLeft className="size-4" />
+                <PanelLeft className="size-[18px]" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>{collapsed ? 'Expand sidebar' : 'Collapse sidebar'}</TooltipContent>
           </Tooltip>
 
-          {/* The name beside the mark. The sidebar carries it at lg and up while expanded; everywhere else
-              (narrow screens, a collapsed sidebar) the header does, so it is never just a bare icon. */}
-          <Link to="/admin" className={`items-center gap-2 ${collapsed ? 'flex' : 'flex lg:hidden'}`} aria-label={`${brand.name} home`}>
-            <LogoMark className="size-7 shrink-0" />
-            <span className="truncate font-semibold tracking-tight">{brand.name}</span>
+          {/* Logo only where the sidebar is not showing it (phones). */}
+          <Link to="/admin" className="flex min-w-0 items-center gap-2 lg:hidden" aria-label={`${brand.name} home`}>
+            <LogoMark className="size-8 shrink-0" />
+            <span className="truncate text-[15px] font-semibold tracking-tight">{brand.name}</span>
           </Link>
 
-          <div className="ml-auto flex items-center gap-1.5">
+          <span aria-hidden className="mx-1 hidden h-5 w-px bg-border lg:block" />
+          <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
+            <span className="hidden text-muted-foreground sm:inline">{area}</span>
+            {title && <ChevronRight className="hidden size-3.5 text-muted-foreground/60 sm:inline" aria-hidden />}
+            <span className="truncate font-medium">{title}</span>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-1">
             <ThemeControls />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 gap-2 pl-1.5">
-                  <span className="grid size-6 place-items-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
-                    {initials}
-                  </span>
+                <Button variant="ghost" className="h-9 gap-1.5 rounded-full pl-1 pr-2">
+                  <Avatar initials={initials} className="size-7 text-[11px] ring-0" />
                   <ChevronDown className="size-3.5 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
-                  {user?.email ?? 'Signed in'}
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <span className="block truncate text-sm font-medium text-foreground">{user?.name || 'Signed in'}</span>
+                  <span className="block truncate text-xs text-muted-foreground">{user?.email}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild><Link to="/dashboard/profile">Profile</Link></DropdownMenuItem>
@@ -326,9 +417,12 @@ export function Shell() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6">
-          <Outlet />
+        <main className={`flex-1 px-4 py-6 md:px-8 md:py-8 ${isAdminArea ? 'pb-32 lg:pb-8' : ''}`}>
+          <div className="mx-auto w-full max-w-7xl">
+            <Outlet />
+          </div>
         </main>
+        {isAdminArea && <MobileTabBar />}
       </div>
     </div>
   );

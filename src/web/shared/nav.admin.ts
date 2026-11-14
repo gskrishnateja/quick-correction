@@ -13,9 +13,9 @@ import { Gauge, Users, Library, ScrollText, Settings } from 'lucide-react';
 import type { NavItem } from './nav.base';
 
 export const items: NavItem[] = [
-  { to: '/admin', label: 'Overview', icon: Gauge, end: true, role: 'admin', order: 100 },
+  { to: '/admin', label: 'Overview', icon: Gauge, end: true, role: 'admin', section: 'Workspace', order: 100 },
   { to: '/admin/content', label: 'Content', icon: Library, role: 'admin', order: 107 },
   { to: '/admin/users', label: 'Users', icon: Users, role: 'admin', order: 105 },
-  { to: '/admin/audit', label: 'Audit log', icon: ScrollText, role: 'admin', order: 120 },
+  { to: '/admin/audit', label: 'Audit log', icon: ScrollText, role: 'admin', section: 'System', order: 120 },
   { to: '/admin/settings', label: 'Settings', icon: Settings, role: 'admin', order: 130 },
 ];
