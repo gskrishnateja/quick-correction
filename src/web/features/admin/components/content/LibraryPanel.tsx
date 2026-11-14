@@ -6,7 +6,7 @@
  * from what is here. Data comes from `/api/library`.
  */
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Button, Input, FormField, Badge, Card, CardContent, Alert, AlertTitle, AlertDescription, toast, useConfirm,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
@@ -36,7 +36,19 @@ type NodeT = {
   questionTypes: QType[] | null; complexity: Complexity | null; marks: number | null;
   /** Questions under this node (all topics beneath it). */
   questionCount: number;
+  /** Subjects only: active paper patterns. */
+  patternCount?: number;
 };
+
+/** Teachers see a subject only when it has chapters and an active pattern (tutorService.setup). */
+const usable = (s: NodeT) => s.children.length > 0 && (s.patternCount ?? 0) > 0;
+
+/** The line under a subject: what it has, and what it still needs before teachers can use it. */
+function subjectLine(n: NodeT) {
+  const parts = [plural(n.children.length, 'chapter', 'chapters'), plural(n.questionCount, 'question', 'questions'), plural(n.patternCount ?? 0, 'paper pattern', 'paper patterns')];
+  const missing = [!n.children.length && 'chapters', !n.patternCount && 'a paper pattern'].filter(Boolean).join(' and ');
+  return missing ? `${parts.join(' · ')} — hidden from teachers until it has ${missing}` : parts.join(' · ');
+}
 
 type TopicForm = { id: string | null; parentId: string; name: string; types: QType[]; complexity: Complexity | ''; marks: string };
 
@@ -44,9 +56,15 @@ function count(nodes: NodeT[], kind: Kind): number {
   return nodes.reduce((n, x) => n + (x.kind === kind ? 1 : 0) + count(x.children, kind), 0);
 }
 
-const tally = (nodes: NodeT[], kind: Kind, one: string, many: string) => {
-  const n = count(nodes, kind);
-  return `${n} ${n === 1 ? one : many}`;
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+const tally = (nodes: NodeT[], kind: Kind, one: string, many: string) => plural(count(nodes, kind), one, many);
+
+/** What each board is, shown under its name. Boards the admin adds get none. */
+const BOARD_INFO: Record<string, string> = {
+  CBSE: 'Central Board of Secondary Education',
+  ICSE: 'CISCE · ICSE in Class 10, ISC in Class 12',
+  IGCSE: 'Cambridge · IGCSE, then AS & A Level',
+  IB: 'International Baccalaureate · MYP, then DP',
 };
 
 /** One line to type a name into: used for adding and renaming. */
@@ -75,6 +93,7 @@ function NameInput({ initial = '', placeholder, onSave, onCancel }: {
 
 export function LibraryPanel() {
   const confirm = useConfirm();
+  const [params, setParams] = useSearchParams();
   const [nodes, setNodes] = React.useState<NodeT[] | null>(null);
   const [loadError, setLoadError] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState<Set<string>>(new Set());
@@ -95,6 +114,21 @@ export function LibraryPanel() {
   }, []);
   React.useEffect(() => { void load(); }, [load]);
 
+  // One board at a time. It lives in the address (`&board=`) so a link or a
+  // reload lands on the same board.
+  const board = nodes?.find((n) => n.id === params.get('board')) ?? nodes?.[0] ?? null;
+  const pickBoard = (id: string) => setParams((p) => { p.set('board', id); return p; }, { replace: true });
+
+  // Open the board's classes and subjects, so its subjects show at a glance.
+  React.useEffect(() => {
+    if (!board) return;
+    setOpen((s) => {
+      const n = new Set(s);
+      for (const c of board.children) { n.add(c.id); for (const sub of c.children) n.add(sub.id); }
+      return n;
+    });
+  }, [board?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const toggle = (id: string) => setOpen((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
   async function run(fn: () => Promise<unknown>, failed: string) {
@@ -102,8 +136,10 @@ export function LibraryPanel() {
   }
 
   const add = (kind: Kind, parentId: string | null) => async (name: string) => {
-    await run(() => api.post('/api/library', { kind, name, parentId }), 'Could not add it.');
+    let id = '';
+    await run(async () => { id = (await api.post<{ node: { id: string } }>('/api/library', { kind, name, parentId })).node.id; }, 'Could not add it.');
     if (parentId) setOpen((s) => new Set(s).add(parentId));
+    if (kind === 'board' && id) pickBoard(id);
     setEditing(null);
   };
   const openTopic = (t: NodeT | null, parentId: string) => {
@@ -171,6 +207,11 @@ export function LibraryPanel() {
             <>
               <span className="min-w-0 flex-1">
                 <span className={`line-clamp-2 block break-words leading-tight ${n.isActive ? '' : 'text-muted-foreground line-through'}`}>{n.name}</span>
+                {n.kind === 'subject' && (
+                  <span className="block text-xs leading-tight text-muted-foreground">
+                    {subjectLine(n)}
+                  </span>
+                )}
                 {(n.kind === 'chapter' || n.kind === 'topic') && (
                   <Link to={`/admin/content?tab=questions&${n.kind}=${n.id}`} className="block w-fit text-xs leading-tight text-muted-foreground hover:text-primary hover:underline" aria-label={`${n.questionCount} questions in ${n.name}`}>
                     {n.questionCount} {n.questionCount === 1 ? 'question' : 'questions'}
@@ -232,23 +273,91 @@ export function LibraryPanel() {
         <PageLoading />
       ) : (
         <>
-          <p className="mb-3 text-sm text-muted-foreground">
-            {tally(nodes, 'board', 'board', 'boards')} · {tally(nodes, 'class', 'class', 'classes')} · {tally(nodes, 'subject', 'subject', 'subjects')} · {tally(nodes, 'chapter', 'chapter', 'chapters')} · {tally(nodes, 'topic', 'topic', 'topics')}
-          </p>
-          <Card>
-            <CardContent className="p-2 sm:p-3">
-              {nodes.length === 0 && editing !== 'add:root' && (
-                <div className="flex flex-col items-center gap-2 py-10 text-center text-muted-foreground">
-                  <BookOpen className="size-8" aria-hidden />
-                  <p>The library is empty. Add a board to start, for example CBSE.</p>
-                </div>
-              )}
-              <ul>{nodes.map((n) => renderRow(n, 0))}</ul>
-              {editing === 'add:root' && (
-                <div className="px-1 py-1"><NameInput placeholder="New board name" onSave={add('board', null)} onCancel={() => setEditing(null)} /></div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Boards: pick one to see its classes and subjects below. */}
+          <div role="tablist" aria-label="Boards" className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {nodes.map((b) => {
+              const on = b.id === board?.id;
+              const chapters = count(b.children, 'chapter');
+              const subjects = b.children.flatMap((c) => c.children);
+              const ready = subjects.filter(usable).length;
+              return (
+                <button
+                  key={b.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={on}
+                  onClick={() => pickBoard(b.id)}
+                  className={`cursor-pointer rounded-2xl border bg-card p-4 text-left transition ${on ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/40'} ${b.isActive ? '' : 'opacity-60'}`}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="text-lg font-bold tracking-tight">{b.name}</span>
+                    {!b.isActive ? <Badge variant="secondary">Hidden</Badge> : ready ? (
+                      <span className={`flex items-center gap-1 text-xs font-medium ${ready === subjects.length ? 'text-success' : 'text-warning'}`}>
+                        <span aria-hidden className={`size-1.5 rounded-full ${ready === subjects.length ? 'bg-success' : 'bg-warning'}`} />
+                        {ready === subjects.length ? 'Ready' : `${ready} of ${subjects.length} ready`}
+                      </span>
+                    ) : (
+                      <span className="text-xs font-medium text-muted-foreground">{chapters ? 'Needs a pattern' : 'Not set up'}</span>
+                    )}
+                  </span>
+                  {BOARD_INFO[b.name] && <span className="mt-0.5 hidden truncate text-xs text-muted-foreground sm:block">{BOARD_INFO[b.name]}</span>}
+                  <span className="mt-3 block text-sm">
+                    {b.children.length ? b.children.map((c) => c.name).join(' · ') : 'No classes yet'}
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    {plural(count(b.children, 'subject'), 'subject', 'subjects')} · {plural(chapters, 'chapter', 'chapters')} · {plural(b.questionCount, 'question', 'questions')}
+                  </span>
+                </button>
+              );
+            })}
+            {editing === 'add:root' && (
+              <div className="col-span-2 rounded-2xl border border-dashed border-border bg-card p-3 lg:col-span-1">
+                <NameInput placeholder="New board name" onSave={add('board', null)} onCancel={() => setEditing(null)} />
+              </div>
+            )}
+          </div>
+
+          {nodes.length === 0 && editing !== 'add:root' ? (
+            <Card>
+              <CardContent className="flex flex-col items-center gap-2 py-10 text-center text-muted-foreground">
+                <BookOpen className="size-8" aria-hidden />
+                <p>The library is empty. Add a board to start, for example CBSE.</p>
+              </CardContent>
+            </Card>
+          ) : board && (
+            <Card className="gap-0 overflow-hidden py-0">
+              <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted/40 px-4 py-3">
+                {editing === `rename:${board.id}` ? (
+                  <div className="min-w-0 flex-1"><NameInput initial={board.name} placeholder="Board name" onSave={rename(board)} onCancel={() => setEditing(null)} /></div>
+                ) : (
+                  <>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{board.name}</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {tally(board.children, 'class', 'class', 'classes')} · {tally(board.children, 'subject', 'subject', 'subjects')} · {tally(board.children, 'chapter', 'chapter', 'chapters')} · {tally(board.children, 'topic', 'topic', 'topics')}
+                      </span>
+                    </span>
+                    <Button variant="outline" size="sm" className="h-8" aria-label={`Add class to ${board.name}`} onClick={() => setEditing(`add:${board.id}`)}><Plus className="size-4" /> <span className="hidden sm:inline">Add class</span></Button>
+                    <div className="flex items-center">
+                      <Button variant="ghost" size="icon" className="size-8" aria-label={`Rename ${board.name}`} title="Rename" onClick={() => setEditing(`rename:${board.id}`)}><Pencil className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" className="size-8" aria-label={board.isActive ? `Hide ${board.name}` : `Show ${board.name}`} title={board.isActive ? 'Hide from teachers' : 'Show to teachers'} onClick={() => setActive(board)}>
+                        {board.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+                      </Button>
+                      <Button variant="ghost" size="icon" className="size-8" aria-label={`Delete ${board.name}`} title="Delete" onClick={() => remove(board)}><Trash2 className="size-4 text-destructive" /></Button>
+                    </div>
+                  </>
+                )}
+              </div>
+              <CardContent className="p-2 sm:p-3">
+                <ul>{board.children.map((c) => renderRow(c, 0))}</ul>
+                {editing === `add:${board.id}` ? (
+                  <div className="py-1 pl-9 pr-1"><NameInput placeholder="New class name, e.g. Class 11" onSave={add('class', board.id)} onCancel={() => setEditing(null)} /></div>
+                ) : board.children.length === 0 && (
+                  <p className="py-6 text-center text-sm text-muted-foreground">No classes yet — use Add class.</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
 
