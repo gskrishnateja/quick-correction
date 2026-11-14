@@ -17,21 +17,32 @@ export const brand = {
   /** Shown in the shell and the browser tab. */
   shortName: 'Quick Correction',
 
-  /**
-   * Primary navigation. Empty by default — a one-page scaffold has nowhere to
-   * navigate to, and a lone "Home" link pointing at the current page is noise.
-   * Add entries and the header (and the mobile slide-over) pick them up:
-   *
-   *   nav: [{ label: 'Pricing', to: '/pricing' }],
-   */
+  /** Primary navigation. The header and the mobile slide-over pick these up. */
   nav: [
-    { label: 'Prototype', to: '/demo' },
-    { label: 'About', to: '/about' },
-    { label: 'Contact', to: '/contact' },
+    { label: 'How it works', to: '/how-it-works' },
+    { label: 'For teachers', to: '/teachers' },
+    { label: 'For parents', to: '/parents' },
+    { label: 'FAQ', to: '/faq' },
   ] as { label: string; to: string }[],
 
-  /** Footer link groups. Also empty until you have somewhere to point. */
+  /** Footer link groups, rendered by SiteFooter on every public page. */
   footer: [
+    {
+      heading: 'Product',
+      links: [
+        { label: 'How it works', to: '/how-it-works' },
+        { label: 'Try the demo', to: '/demo' },
+        { label: 'FAQ', to: '/faq' },
+      ],
+    },
+    {
+      heading: 'For you',
+      links: [
+        { label: 'Teachers', to: '/teachers' },
+        { label: 'Parents', to: '/parents' },
+        { label: 'Sign in', to: '/auth/login' },
+      ],
+    },
     {
       heading: 'Company',
       links: [

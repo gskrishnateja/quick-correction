@@ -35,6 +35,8 @@ export interface AdminPageHeaderProps {
    * admin page you are on is a control people have to re-find each time.
    */
   actions?: ReactNode;
+  /** Small label above the title. */
+  eyebrow?: ReactNode;
 }
 
 export function AdminPageHeader({
@@ -42,12 +44,13 @@ export function AdminPageHeader({
   description,
   breadcrumbs,
   actions,
+  eyebrow,
 }: AdminPageHeaderProps) {
   const hasCrumbs = Boolean(breadcrumbs && breadcrumbs.length > 0);
-  if (!title && !description && !hasCrumbs && !actions) return null;
+  if (!title && !description && !hasCrumbs && !actions && !eyebrow) return null;
 
   return (
-    <div className="mb-6 space-y-2">
+    <div className="mb-6 space-y-2 md:mb-8">
       {hasCrumbs && (
         <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1.5">
@@ -71,7 +74,8 @@ export function AdminPageHeader({
           where a button next to a 3xl heading has nowhere to go. */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          {title && <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>}
+          {eyebrow && <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{eyebrow}</p>}
+          {title && <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.03em] sm:text-3xl">{title}</h1>}
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
         {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}

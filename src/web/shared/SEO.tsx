@@ -14,6 +14,8 @@ interface SEOProps {
   ogDescription?: string;
   ogImage?: string;
   canonical?: string;
+  noindex?: boolean;
+  jsonLd?: object | object[];
 }
 
 export const SEO: React.FC<SEOProps> = (props) => {

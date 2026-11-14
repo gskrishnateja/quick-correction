@@ -163,8 +163,8 @@
 }
 
 /* ── the palettes ──────────────────────────────────────────────────────────
- * One line each. Add your own by appending a hue here and to PALETTES in
- * shared/palettes.ts — the switcher in the header picks it up automatically. */
+ * One line each. The app uses the brand palette (medhamark) only; the user-facing
+ * palette picker was removed, so the others are unused and kept for reference. */
 
 .theme-medhamark          { --brand-h: 264; --brand-c: 0.2; }      /* Royal blue with gold */
 .theme-medhamark-teal     { --brand-h: 195; }                      /* Teal    */
@@ -317,3 +317,23 @@
  * and the composer drops down into the space it leaves. */
 html[data-qc-recording] .qc-tabbar { display: none; }
 html[data-qc-recording] .qc-above-tabs { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+
+/* Home hero: scan, mark, score. The beam sweeps the page; marks pop in. */
+.mm-scan-beam {
+  position: absolute; inset-inline: 0; height: 64px; top: -64px;
+  background: linear-gradient(180deg, transparent, color-mix(in oklch, var(--mm-from) 22%, transparent) 70%, color-mix(in oklch, var(--mm-from) 75%, transparent));
+  border-bottom: 2px solid var(--mm-from);
+  box-shadow: 0 6px 18px -4px color-mix(in oklch, var(--mm-from) 60%, transparent);
+  animation: mm-scan 1.5s cubic-bezier(.45,.05,.55,.95) infinite;
+}
+@keyframes mm-scan { from { top: -64px; } to { top: 100%; } }
+.mm-pop { animation: mm-pop 420ms cubic-bezier(.2,.9,.3,1.3) both; }
+@keyframes mm-pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+.mm-stamp { animation: mm-stamp 380ms cubic-bezier(.2,.9,.3,1.5) both; }
+@keyframes mm-stamp { from { opacity: 0; transform: scale(1.8) rotate(-12deg); } to { opacity: 1; transform: none; } }
+.mm-fade { animation: mm-fade 400ms ease both; }
+@keyframes mm-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .mm-scan-beam { display: none; }
+  .mm-pop, .mm-stamp, .mm-fade { animation: none; }
+}
