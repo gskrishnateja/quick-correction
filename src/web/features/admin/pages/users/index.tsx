@@ -299,16 +299,18 @@ export default function AdminUsersPage() {
         ))}
       </ul>
 
-      <Card className="hidden md:block">
+      {/* Card's own py-6 / gap-6 would leave empty bands above and below the
+          table, so the card is flush and the cells carry the padding instead. */}
+      <Card className="hidden gap-0 overflow-hidden py-0 md:block">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="hidden lg:table-cell">Last sign-in</TableHead>
-                <TableHead className="w-0 text-right">Actions</TableHead>
+          <Table className="[&_td:first-child]:pl-5 [&_td:last-child]:pr-5 [&_td]:py-3 [&_th:first-child]:pl-5 [&_th:last-child]:pr-5">
+            <TableHeader className="bg-muted/50">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Name</TableHead>
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Role</TableHead>
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</TableHead>
+                <TableHead className="hidden h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground lg:table-cell">Last sign-in</TableHead>
+                <TableHead className="h-10 w-0 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
