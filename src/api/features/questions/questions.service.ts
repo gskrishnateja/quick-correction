@@ -25,6 +25,7 @@ type Input = {
   patternId?: string | null; figureSvg?: string | null; figureAlt?: string | null;
   parts?: { label: string; marks: number; text: string; answer?: string }[] | null;
   markingSteps?: { step: string; marks: number }[] | null;
+  textbookRef?: string | null;
 };
 
 /** A figure is shown as an image, but anything that could run or fetch is refused here too. */
@@ -104,6 +105,7 @@ async function clean(db: any, data: Input, partial: boolean) {
       out.markingSteps = steps.length ? steps : null;
     }
   }
+  if (data.textbookRef !== undefined) out.textbookRef = data.textbookRef === null ? null : String(data.textbookRef).trim().slice(0, 160) || null;
   if (data.answer !== undefined) out.answer = data.answer === null ? null : String(data.answer).trim() || null;
   if (typeof data.isActive === 'boolean') out.isActive = data.isActive;
   if (typeof data.competency === 'boolean') out.competency = data.competency;
@@ -170,7 +172,7 @@ export const questionsService = {
     return { chapters: list, totals };
   },
 
-  async list(f: { nodeId?: string; topicId?: string; chapterId?: string; type?: string; complexity?: string; status?: string; review?: string; q?: string; page?: number; asked?: string; pattern?: string }) {
+  async list(f: { nodeId?: string; topicId?: string; chapterId?: string; type?: string; complexity?: string; status?: string; review?: string; q?: string; page?: number; asked?: string; pattern?: string; textbook?: string }) {
     const db = await databaseClass.get();
     const where: any = {};
     if (f.nodeId) {
@@ -190,6 +192,8 @@ export const questionsService = {
     if (f.review && REVIEW.includes(f.review)) where.reviewStatus = f.review;
     if (f.q?.trim()) where.text = { contains: f.q.trim() };
     if (f.pattern) where.patternId = f.pattern;
+    // Questions tied to the textbook by chapter and section (textbookRef set).
+    if (f.textbook === 'yes') where.textbookRef = { not: null };
     // Board history comes from the question's pattern.
     if (f.asked === 'recent') where.pattern = { lastAsked: { gte: new Date().getFullYear() - 2 } };
     if (f.asked === 'never') where.OR = [{ patternId: null }, { pattern: { timesAsked: 0 } }];

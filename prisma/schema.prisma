@@ -251,6 +251,10 @@ model Question {
   parts      Json?
   // Marks by step: [{ step, marks }]. Null when only `answer` is recorded.
   markingSteps Json?
+  // Where this question lines up with the class textbook, e.g. "NCERT Ch 4 ·
+  // 4.3 Factorisation · Exercise 4.2". A pointer only: the question is our
+  // own, never the textbook's text. Null when it isn't tied to the textbook.
+  textbookRef String?
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
 

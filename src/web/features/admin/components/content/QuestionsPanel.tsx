@@ -14,7 +14,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
   Alert, AlertDescription, AlertTitle, toast, useConfirm,
 } from '@bloomneo/uikit';
-import { Plus, Pencil, Trash2, Eye, EyeOff, Search, Loader2, AlertTriangle, FileQuestion, ChevronLeft, ChevronRight, ChevronDown, Check, X, Sparkles, FolderTree } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, EyeOff, Search, Loader2, AlertTriangle, FileQuestion, ChevronLeft, ChevronRight, ChevronDown, Check, X, Sparkles, FolderTree, BookOpen } from 'lucide-react';
 import { api } from '@/shared/api';
 import { MathText } from '@/shared/MathText';
 import { QuestionFigure } from '@/shared/QuestionFigure';
@@ -31,6 +31,8 @@ type Question = {
   figureSvg: string | null; figureAlt: string | null; askedIn: string[]; lastAsked: number | null;
   parts: { label: string; marks: number; text: string; answer?: string }[] | null;
   markingSteps: { step: string; marks: number }[] | null;
+  /** Pointer to where this lines up with the textbook; the question itself is our own. */
+  textbookRef: string | null;
 };
 type Counts = Record<Review, number>;
 type LibNode = { id: string; kind: string; name: string; questionCount?: number; children: LibNode[] };
@@ -41,6 +43,36 @@ const REVIEW_TABS: { id: 'all' | Review; label: string }[] = [
   { id: 'draft', label: 'To review' }, { id: 'flagged', label: 'Flagged' }, { id: 'approved', label: 'Approved' }, { id: 'rejected', label: 'Rejected' }, { id: 'all', label: 'All' },
 ];
 const COMPLEXITY_LABEL: Record<Complexity, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+
+
+/** The question in full: text, options, figure, answer and marking steps. */
+function QuestionBody({ q }: { q: Question }) {
+  return (
+    <>
+      {q.reviewNote && (
+        <Alert className="border-destructive/40 bg-destructive/8"><AlertTriangle className="size-4 text-destructive" /><AlertTitle>Reviewer note</AlertTitle><AlertDescription>{q.reviewNote}</AlertDescription></Alert>
+      )}
+      <div className="space-y-3 text-sm">
+        <p className="whitespace-pre-wrap"><MathText text={q.text} /></p>
+        <QuestionFigure svg={q.figureSvg} alt={q.figureAlt} />
+        {q.parts && <ol className="space-y-1">{q.parts.map((p) => <li key={p.label}><span className="text-muted-foreground">({p.label}) [{p.marks}] </span><MathText text={p.text} />{p.answer && <span className="block text-xs text-muted-foreground">Key: <MathText text={p.answer} /></span>}</li>)}</ol>}
+        {q.options && (
+          <ol className="list-[upper-alpha] space-y-1 pl-6">{q.options.map((o, i) => <li key={i}><MathText text={String(o)} /></li>)}</ol>
+        )}
+        <div className="rounded-lg border border-border bg-muted p-3">
+          <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Answer</p>
+          <p className="whitespace-pre-wrap">{q.answer ? <MathText text={q.answer} /> : 'No answer recorded.'}</p>
+          {!!q.markingSteps?.length && <ul className="mt-2 space-y-0.5">{q.markingSteps.map((m, i) => <li key={i} className="flex justify-between gap-3"><span><MathText text={m.step} /></span><span className="shrink-0 tabular-nums text-muted-foreground">{m.marks}</span></li>)}</ul>}
+          {q.askedIn.length > 0 && <p className="mt-2 text-xs text-muted-foreground">This type asked: {q.askedIn.join(', ')}</p>}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function questionMeta(q: Question) {
+  return `${TYPE_LABEL[q.type]} · ${COMPLEXITY_LABEL[q.complexity]} · ${q.marks} mark${q.marks === 1 ? '' : 's'}${q.source === 'ai' ? ' · written by AI' : ''}`;
+}
 
 /** Every topic with its "Class › Subject › Chapter › Topic" label, and every chapter. */
 function flatten(nodes: LibNode[], trail: string[] = [], chapterId = ''): { topics: Choice[]; chapters: { id: string; label: string }[] } {
@@ -116,8 +148,8 @@ function CategoryTree({ nodes, selected, open, onToggle, onPick, total }: {
 
 type PartRow = { label: string; marks: string; text: string; answer: string };
 type StepRow = { step: string; marks: string };
-type Form = { id: string | null; topicId: string; type: QType; complexity: Complexity; marks: string; text: string; options: string[]; answer: string; figureSvg: string; figureAlt: string; parts: PartRow[]; steps: StepRow[] };
-const blank = (topicId = ''): Form => ({ id: null, topicId, type: 'short', complexity: 'medium', marks: '2', text: '', options: ['', '', '', ''], answer: '', figureSvg: '', figureAlt: '', parts: [], steps: [] });
+type Form = { id: string | null; topicId: string; type: QType; complexity: Complexity; marks: string; text: string; options: string[]; answer: string; figureSvg: string; figureAlt: string; parts: PartRow[]; steps: StepRow[]; textbookRef: string };
+const blank = (topicId = ''): Form => ({ id: null, topicId, type: 'short', complexity: 'medium', marks: '2', text: '', options: ['', '', '', ''], answer: '', figureSvg: '', figureAlt: '', parts: [], steps: [], textbookRef: '' });
 const hasOptions = (t: QType) => t === 'mcq' || t === 'assertion_reason';
 /** Short list of when the board asked this kind of question: the latest few years. */
 const askedLabel = (l: string[]) => { const y = [...new Set(l.map((s) => s.split(' ')[0]))]; return `Asked ${y.slice(-3).join(', ')}`; };
@@ -129,7 +161,7 @@ export function QuestionsPanel() {
   const [pageSize, setPageSize] = React.useState(50);
   const [page, setPage] = React.useState(1);
   const [params] = useSearchParams();
-  const [filters, setFilters] = React.useState({ q: '', nodeId: params.get('topic') ?? params.get('chapter') ?? '', type: 'all', complexity: 'all', status: 'all', asked: 'all', review: ['draft', 'flagged', 'approved', 'rejected'].includes(params.get('review') ?? '') ? params.get('review')! : 'all' });
+  const [filters, setFilters] = React.useState({ q: '', nodeId: params.get('topic') ?? params.get('chapter') ?? '', type: 'all', complexity: 'all', status: 'all', asked: 'all', textbook: params.get('textbook') === 'yes' ? 'yes' : 'all', review: ['draft', 'flagged', 'approved', 'rejected'].includes(params.get('review') ?? '') ? params.get('review')! : 'all' });
   const [counts, setCounts] = React.useState<Counts>({ draft: 0, approved: 0, rejected: 0, flagged: 0 });
   const [picked, setPicked] = React.useState<Set<string>>(new Set());
   const [reviewing, setReviewing] = React.useState(false);
@@ -142,6 +174,9 @@ export function QuestionsPanel() {
   const [form, setForm] = React.useState<Form | null>(null);
   const [saving, setSaving] = React.useState(false);
   const [formError, setFormError] = React.useState<string | null>(null);
+  // An opened question shows in a side panel: a third column from 1024px up,
+  // a panel sliding over from the right on smaller screens.
+  const sidePreview = preview !== null;
 
   React.useEffect(() => {
     api.get<{ nodes: LibNode[] }>('/api/library').then((r) => {
@@ -162,7 +197,7 @@ export function QuestionsPanel() {
     try {
       const query: Record<string, string> = { page: String(page) };
       if (filters.q.trim()) query.q = filters.q.trim();
-      for (const k of ['type', 'complexity', 'status', 'review', 'asked'] as const) if (filters[k] !== 'all') query[k] = filters[k];
+      for (const k of ['type', 'complexity', 'status', 'review', 'asked', 'textbook'] as const) if (filters[k] !== 'all') query[k] = filters[k];
       if (filters.nodeId) query.nodeId = filters.nodeId;
       const r = await api.get<{ questions: Question[]; total: number; pageSize: number; counts: Counts }>('/api/questions', { query });
       setRows(r.questions);
@@ -170,8 +205,10 @@ export function QuestionsPanel() {
       setPicked(new Set());
       setTotal(r.total);
       setPageSize(r.pageSize);
+      return r.questions;
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : 'Could not load questions.');
+      return null;
     }
   }, [filters, page]);
 
@@ -184,11 +221,21 @@ export function QuestionsPanel() {
   async function review(ids: string[], status: 'approved' | 'rejected') {
     if (!ids.length || reviewing) return;
     setReviewing(true);
+    // Reviewing from the side panel moves on to the next question, so a run of
+    // drafts can be worked through without going back to the list each time.
+    const at = preview && rows ? rows.findIndex((r) => r.id === preview.id) : -1;
+    const nextIds = at >= 0 && rows ? [rows[at + 1]?.id, rows[at - 1]?.id] : [];
     try {
       const r = await api.post<{ updated: number }>('/api/questions/review', { ids, status });
       toast.success(`${r.updated} question${r.updated === 1 ? '' : 's'} ${status}`);
-      setPreview(null);
-      await load();
+      const fresh = await load();
+      if (preview && ids.length === 1 && ids[0] === preview.id && fresh) {
+        const stay = fresh.find((q) => q.id === preview.id);
+        const next = stay ? fresh[fresh.indexOf(stay) + 1] : nextIds.map((id) => fresh.find((q) => q.id === id)).find(Boolean);
+        setPreview(next ?? stay ?? null);
+      } else {
+        setPreview(null);
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not update the review.');
     } finally {
@@ -200,7 +247,7 @@ export function QuestionsPanel() {
 
   function edit(q: Question) {
     setFormError(null);
-    setForm({ id: q.id, topicId: q.topicId, type: q.type, complexity: q.complexity, marks: String(q.marks), text: q.text, options: [...(q.options ?? []), '', '', '', ''].slice(0, Math.max(4, q.options?.length ?? 0)), answer: q.answer ?? '', figureSvg: q.figureSvg ?? '', figureAlt: q.figureAlt ?? '', parts: (q.parts ?? []).map((p) => ({ label: p.label, marks: String(p.marks), text: p.text, answer: p.answer ?? '' })), steps: (q.markingSteps ?? []).map((m) => ({ step: m.step, marks: String(m.marks) })) });
+    setForm({ id: q.id, topicId: q.topicId, type: q.type, complexity: q.complexity, marks: String(q.marks), text: q.text, options: [...(q.options ?? []), '', '', '', ''].slice(0, Math.max(4, q.options?.length ?? 0)), answer: q.answer ?? '', figureSvg: q.figureSvg ?? '', figureAlt: q.figureAlt ?? '', parts: (q.parts ?? []).map((p) => ({ label: p.label, marks: String(p.marks), text: p.text, answer: p.answer ?? '' })), steps: (q.markingSteps ?? []).map((m) => ({ step: m.step, marks: String(m.marks) })), textbookRef: q.textbookRef ?? '' });
   }
 
   async function save(e: React.FormEvent) {
@@ -212,6 +259,7 @@ export function QuestionsPanel() {
       topicId: form.topicId, type: form.type, complexity: form.complexity, marks: Number(form.marks), text: form.text,
       options: hasOptions(form.type) ? form.options : null, answer: form.answer,
       figureSvg: form.figureSvg || null, figureAlt: form.figureAlt || null,
+      textbookRef: form.textbookRef.trim() || null,
       parts: form.type === 'case' && form.parts.length ? form.parts.map((p) => ({ ...p, marks: Number(p.marks) })) : null,
       markingSteps: form.steps.length ? form.steps.map((m) => ({ step: m.step, marks: Number(m.marks) })) : null,
     };
@@ -274,7 +322,7 @@ export function QuestionsPanel() {
         actions={<Button onClick={() => { setFormError(null); setForm(blank(startTopic())); }} disabled={topics.length === 0}><Plus className="size-4" /> Add question</Button>}
       />
 
-      <div className="lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-6">
+      <div className={`lg:grid lg:gap-6 ${sidePreview ? 'lg:grid-cols-[13rem_minmax(0,1fr)_21rem] xl:grid-cols-[15rem_minmax(0,1fr)_25rem] 2xl:grid-cols-[16rem_minmax(0,1fr)_30rem]' : 'lg:grid-cols-[16rem_minmax(0,1fr)]'}`}>
         {/* Side tree: a drawer-style panel under a button on a phone, always open on a wide screen */}
         <aside className="mb-4 lg:mb-0">
           <Button variant="outline" className="w-full justify-between lg:hidden" aria-expanded={treeShown} onClick={() => setTreeShown((v) => !v)}>
@@ -315,6 +363,7 @@ export function QuestionsPanel() {
               <ChipGroup label="Type" value={filters.type} onChange={(v) => setFilter({ type: v })} options={[['all', 'All'], ...(Object.keys(TYPE_LABEL) as QType[]).map((t) => [t, TYPE_LABEL[t]] as [string, string])]} />
               <ChipGroup label="Level" value={filters.complexity} onChange={(v) => setFilter({ complexity: v })} options={[['all', 'Any'], ...(Object.keys(COMPLEXITY_LABEL) as Complexity[]).map((c) => [c, COMPLEXITY_LABEL[c]] as [string, string])]} />
               <ChipGroup label="Board" value={filters.asked} onChange={(v) => setFilter({ asked: v })} options={[['all', 'Any'], ['recent', 'Last 3 years'], ['never', 'Not asked']]} />
+              <ChipGroup label="Source" value={filters.textbook} onChange={(v) => setFilter({ textbook: v })} options={[['all', 'Any'], ['yes', 'Textbook-style']]} />
               <ChipGroup label="Shown" value={filters.status} onChange={(v) => setFilter({ status: v })} options={[['all', 'All'], ['active', 'Active'], ['hidden', 'Hidden']]} />
             </div>
           </div>
@@ -347,15 +396,17 @@ export function QuestionsPanel() {
                       onChange={(e) => setPicked(e.target.checked ? new Set(rows.map((r) => r.id)) : new Set())} />
                   </TableHead>
                   <TableHead>Question</TableHead>
-                  <TableHead className="hidden 2xl:table-cell">Topic</TableHead>
-                  <TableHead className="hidden sm:table-cell">Type</TableHead>
+                  <TableHead className={sidePreview ? 'hidden' : 'hidden 2xl:table-cell'}>Topic</TableHead>
+                  <TableHead className={sidePreview ? 'hidden' : 'hidden sm:table-cell'}>Type</TableHead>
                   <TableHead>Marks</TableHead>
-                  <TableHead className="hidden text-right sm:table-cell">Actions</TableHead>
+                  <TableHead className={`hidden text-right ${sidePreview ? '2xl:table-cell' : 'sm:table-cell'}`}>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {rows.map((q) => (
-                  <TableRow key={q.id} className={q.isActive || q.reviewStatus === 'draft' || q.reviewStatus === 'flagged' ? '' : 'opacity-60'}>
+                  <TableRow key={q.id} aria-selected={preview?.id === q.id}
+                    onClick={(e) => { if (!(e.target as HTMLElement).closest('button, input, a')) setPreview(q); }}
+                    className={`cursor-pointer ${q.isActive || q.reviewStatus === 'draft' || q.reviewStatus === 'flagged' ? '' : 'opacity-60'} ${sidePreview && preview?.id === q.id ? 'bg-primary/5 shadow-[inset_3px_0_0_var(--primary)] hover:bg-primary/5' : ''}`}>
                     <TableCell className="align-top">
                       <input type="checkbox" aria-label="Select question" checked={picked.has(q.id)}
                         onChange={(e) => setPicked((s) => { const n = new Set(s); e.target.checked ? n.add(q.id) : n.delete(q.id); return n; })} />
@@ -366,27 +417,28 @@ export function QuestionsPanel() {
                       </button>
                       <div className="mt-1 flex flex-wrap items-center gap-1.5">
                         {q.source === 'ai' && <Badge variant="outline"><Sparkles className="mr-1 size-3" />AI</Badge>}
+                        {q.textbookRef && <Badge variant="outline" title={q.textbookRef}><BookOpen className="mr-1 size-3" />Textbook</Badge>}
                         {q.askedIn.length > 0 && <Badge variant="outline" title={`This type asked: ${q.askedIn.join(', ')}`}>{askedLabel(q.askedIn)}</Badge>}
                         {q.figureSvg && <Badge variant="secondary">Figure</Badge>}
                         {q.reviewStatus === 'draft' && <Badge variant="secondary">To review</Badge>}
                         {q.reviewStatus === 'flagged' && <Badge variant="outline" className="text-destructive">Flagged</Badge>}
                         {q.reviewStatus === 'rejected' && <Badge variant="outline">Rejected</Badge>}
                       </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5 sm:hidden">
+                      <div className={`mt-1 flex flex-wrap items-center gap-1.5 ${sidePreview ? '' : 'sm:hidden'}`}>
                         <Badge variant="outline">{TYPE_LABEL[q.type]}</Badge>
                         <Badge variant="secondary">{COMPLEXITY_LABEL[q.complexity]}</Badge>
                       </div>
                       <div className="-ml-2 mt-1 flex items-center sm:hidden">{rowActions(q)}</div>
                     </TableCell>
-                    <TableCell className="hidden align-top text-sm text-muted-foreground 2xl:table-cell">{q.topicPath.slice(-2).join(' › ')}</TableCell>
-                    <TableCell className="hidden align-top sm:table-cell">
+                    <TableCell className={sidePreview ? 'hidden' : 'hidden align-top text-sm text-muted-foreground 2xl:table-cell'}>{q.topicPath.slice(-2).join(' › ')}</TableCell>
+                    <TableCell className={sidePreview ? 'hidden' : 'hidden align-top sm:table-cell'}>
                       <div className="flex flex-col items-start gap-1">
                         <Badge variant="outline">{TYPE_LABEL[q.type]}</Badge>
                         <span className="text-xs text-muted-foreground">{COMPLEXITY_LABEL[q.complexity]}</span>
                       </div>
                     </TableCell>
                     <TableCell className="align-top">{q.marks}{!q.isActive && q.reviewStatus === 'approved' && <Badge variant="secondary" className="ml-2">Hidden</Badge>}</TableCell>
-                    <TableCell className="hidden whitespace-nowrap text-right align-top sm:table-cell">
+                    <TableCell className={`hidden whitespace-nowrap text-right align-top ${sidePreview ? '2xl:table-cell' : 'sm:table-cell'}`}>
                       {rowActions(q)}
                     </TableCell>
                   </TableRow>
@@ -407,45 +459,40 @@ export function QuestionsPanel() {
       )}
 
         </div>
-      </div>
 
-      <Dialog open={preview !== null} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
-          {preview && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{preview.topicPath.slice(-2).join(' › ')}</DialogTitle>
-                <DialogDescription>
-                  {TYPE_LABEL[preview.type]} · {COMPLEXITY_LABEL[preview.complexity]} · {preview.marks} mark{preview.marks === 1 ? '' : 's'}
-                  {preview.source === 'ai' ? ' · written by AI' : ''}
-                </DialogDescription>
-              </DialogHeader>
-              {preview.reviewNote && (
-                <Alert className="border-destructive/40 bg-destructive/8"><AlertTriangle className="size-4 text-destructive" /><AlertTitle>Reviewer note</AlertTitle><AlertDescription>{preview.reviewNote}</AlertDescription></Alert>
-              )}
-              <div className="space-y-3 text-sm">
-                <p className="whitespace-pre-wrap"><MathText text={preview.text} /></p>
-                <QuestionFigure svg={preview.figureSvg} alt={preview.figureAlt} />
-                {preview.parts && <ol className="space-y-1">{preview.parts.map((p) => <li key={p.label}><span className="text-muted-foreground">({p.label}) [{p.marks}] </span><MathText text={p.text} />{p.answer && <span className="block text-xs text-muted-foreground">Key: <MathText text={p.answer} /></span>}</li>)}</ol>}
-                {preview.options && (
-                  <ol className="list-[upper-alpha] space-y-1 pl-6">{preview.options.map((o, i) => <li key={i}><MathText text={String(o)} /></li>)}</ol>
-                )}
-                <div className="rounded-lg border border-border bg-muted p-3">
-                  <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Answer</p>
-                  <p className="whitespace-pre-wrap">{preview.answer ? <MathText text={preview.answer} /> : 'No answer recorded.'}</p>
-                  {!!preview.markingSteps?.length && <ul className="mt-2 space-y-0.5">{preview.markingSteps.map((m, i) => <li key={i} className="flex justify-between gap-3"><span><MathText text={m.step} /></span><span className="shrink-0 tabular-nums text-muted-foreground">{m.marks}</span></li>)}</ul>}
-                  {preview.askedIn.length > 0 && <p className="mt-2 text-xs text-muted-foreground">This type asked: {preview.askedIn.join(', ')}</p>}
+        {/* Preview panel: a third column on a wide screen. Closing it gives the list the room back. */}
+        {sidePreview && preview && (
+          <aside aria-label="Question preview" className="fixed inset-y-0 right-0 z-40 w-full max-w-md lg:static lg:z-auto lg:w-auto lg:max-w-none lg:min-w-0">
+            <div className="flex h-full flex-col overflow-hidden border-l border-border bg-card shadow-xl lg:sticky lg:top-4 lg:h-auto lg:max-h-[calc(100vh-8rem)] lg:rounded-xl lg:border lg:shadow-none">
+              <div className="flex items-start gap-2 border-b border-border px-4 py-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium leading-snug">{preview.topicPath.slice(-2).join(' › ')}</p>
+                  <p className="text-xs text-muted-foreground">{questionMeta(preview)}</p>
                 </div>
+                {rows && (() => {
+                  const at = rows.findIndex((r) => r.id === preview.id);
+                  return (
+                    <div className="flex shrink-0 items-center">
+                      <Button variant="ghost" size="icon" className="size-8" aria-label="Previous question" disabled={at <= 0} onClick={() => setPreview(rows[at - 1])}><ChevronLeft className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" className="size-8" aria-label="Next question" disabled={at < 0 || at >= rows.length - 1} onClick={() => setPreview(rows[at + 1])}><ChevronRight className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" className="size-8" aria-label="Close preview" onClick={() => setPreview(null)}><X className="size-4" /></Button>
+                    </div>
+                  );
+                })()}
               </div>
-              <DialogFooter>
-                <Button variant="ghost" onClick={() => { const q = preview; setPreview(null); edit(q); }}><Pencil className="size-4" /> Edit</Button>
-                <Button variant="outline" disabled={reviewing} onClick={() => review([preview.id], 'rejected')}><X className="size-4" /> Reject</Button>
-                <Button disabled={reviewing || preview.reviewStatus === 'approved'} onClick={() => review([preview.id], 'approved')}><Check className="size-4" /> Approve</Button>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+              <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
+                {preview.textbookRef && <p className="flex items-start gap-1.5 text-xs text-muted-foreground"><BookOpen className="mt-0.5 size-3.5 shrink-0" /> Lines up with {preview.textbookRef}</p>}
+                <QuestionBody q={preview} />
+              </div>
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-4 py-3">
+                <Button variant="ghost" size="sm" className="mr-auto" onClick={() => edit(preview)}><Pencil className="size-4" /> Edit</Button>
+                <Button variant="outline" size="sm" disabled={reviewing || preview.reviewStatus === 'rejected'} onClick={() => review([preview.id], 'rejected')}><X className="size-4" /> Reject</Button>
+                <Button size="sm" disabled={reviewing || preview.reviewStatus === 'approved'} onClick={() => review([preview.id], 'approved')}><Check className="size-4" /> Approve</Button>
+              </div>
+            </div>
+          </aside>
+        )}
+      </div>
 
       <Dialog open={form !== null} onOpenChange={(o) => !o && setForm(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
@@ -545,6 +592,11 @@ export function QuestionsPanel() {
                 <div className="sm:col-span-3">
                   <FormField label="Answer / marking scheme" helper="Used when marking. Never shown to students or parents.">
                     <Textarea rows={3} value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} />
+                  </FormField>
+                </div>
+                <div className="sm:col-span-3">
+                  <FormField label="Textbook reference" helper="Optional. Where this lines up with the class textbook, e.g. NCERT Class 10 · Ch 4 Quadratic Equations · Nature of roots. Write the question in your own words, never copied from the book.">
+                    <Input value={form.textbookRef} maxLength={160} onChange={(e) => setForm({ ...form, textbookRef: e.target.value })} placeholder="NCERT Class 10 · Ch 4 Quadratic Equations · Nature of roots" />
                   </FormField>
                 </div>
               </div>
