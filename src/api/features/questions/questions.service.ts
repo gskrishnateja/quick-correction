@@ -192,8 +192,10 @@ export const questionsService = {
     if (f.review && REVIEW.includes(f.review)) where.reviewStatus = f.review;
     if (f.q?.trim()) where.text = { contains: f.q.trim() };
     if (f.pattern) where.patternId = f.pattern;
-    // Questions tied to the textbook by chapter and section (textbookRef set).
+    // Questions tied to the textbook (textbookRef set); 'mapped' narrows to the
+    // ones written one-to-one against a numbered book example or exercise.
     if (f.textbook === 'yes') where.textbookRef = { not: null };
+    if (f.textbook === 'mapped') where.textbookRef = { contains: 'Same skill as' };
     // Board history comes from the question's pattern.
     if (f.asked === 'recent') where.pattern = { lastAsked: { gte: new Date().getFullYear() - 2 } };
     if (f.asked === 'never') where.OR = [{ patternId: null }, { pattern: { timesAsked: 0 } }];

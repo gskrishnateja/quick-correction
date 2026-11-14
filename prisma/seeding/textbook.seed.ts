@@ -6,7 +6,7 @@
  */
 import 'dotenv/config';
 import { databaseClass } from '@bloomneo/appkit/database';
-import { TEXTBOOK_QUESTIONS } from './textbook-questions.data.js';
+import { ALL_TEXTBOOK_QUESTIONS } from './textbook-questions.data.js';
 
 async function main() {
   const db = await databaseClass.get();
@@ -14,7 +14,7 @@ async function main() {
   if (!subject) throw new Error('Run npm run db:seed:library first');
 
   let added = 0;
-  for (const q of TEXTBOOK_QUESTIONS) {
+  for (const q of ALL_TEXTBOOK_QUESTIONS) {
     if (await db.question.findUnique({ where: { id: q.id } })) continue;
     const chapter = await db.curriculumNode.findFirst({ where: { kind: 'chapter', name: q.chapter, parentId: subject.id } });
     const topic = chapter && await db.curriculumNode.findFirst({ where: { kind: 'topic', name: q.topic, parentId: chapter.id } });

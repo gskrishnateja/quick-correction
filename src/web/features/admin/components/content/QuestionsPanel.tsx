@@ -8,13 +8,14 @@
 import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
-  Button, Input, Textarea, FormField, Badge,
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Button, Input, Textarea, FormField,
+  Popover, PopoverContent, PopoverTrigger,
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
   Alert, AlertDescription, AlertTitle, toast, useConfirm,
 } from '@bloomneo/uikit';
-import { Plus, Pencil, Trash2, Eye, EyeOff, Search, Loader2, AlertTriangle, FileQuestion, ChevronLeft, ChevronRight, ChevronDown, Check, X, Sparkles, FolderTree, BookOpen } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, EyeOff, Search, Loader2, AlertTriangle, FileQuestion, ChevronLeft, ChevronRight, ChevronDown, Check, X, FolderTree, BookOpen, SlidersHorizontal, MoreHorizontal, Image as ImageIcon } from 'lucide-react';
 import { api } from '@/shared/api';
 import { MathText } from '@/shared/MathText';
 import { QuestionFigure } from '@/shared/QuestionFigure';
@@ -89,17 +90,15 @@ function flatten(nodes: LibNode[], trail: string[] = [], chapterId = ''): { topi
   return { topics, chapters };
 }
 
-/** A small row of exclusive choices, in place of a dropdown. */
-function ChipGroup({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: [string, string][] }) {
-  return (
-    <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={label}>
-      <span className="text-xs text-muted-foreground">{label}</span>
-      {options.map(([id, name]) => (
-        <Button key={id} size="sm" className="h-7 px-2.5 text-xs" variant={value === id ? 'secondary' : 'ghost'} aria-pressed={value === id} onClick={() => onChange(id)}>{name}</Button>
-      ))}
-    </div>
-  );
-}
+/** The secondary filters, kept behind the Filters button. The first option is "off". */
+const FILTERS = [
+  { key: 'type', label: 'Type', options: [['all', 'Any type'], ...(Object.keys(TYPE_LABEL) as QType[]).map((t) => [t, TYPE_LABEL[t]] as const)] },
+  { key: 'complexity', label: 'Level', options: [['all', 'Any level'], ...(Object.keys(COMPLEXITY_LABEL) as Complexity[]).map((c) => [c, COMPLEXITY_LABEL[c]] as const)] },
+  { key: 'textbook', label: 'Source', options: [['all', 'Any source'], ['yes', 'Linked to the textbook'], ['mapped', 'Matched to a book question']] },
+  { key: 'asked', label: 'Board history', options: [['all', 'Any'], ['recent', 'Asked in the last 3 years'], ['never', 'Never asked']] },
+  { key: 'status', label: 'Visibility', options: [['all', 'Shown and hidden'], ['active', 'Shown in papers'], ['hidden', 'Hidden']] },
+] as const satisfies readonly { key: string; label: string; options: readonly (readonly [string, string])[] }[];
+const STATUS_LABEL: Record<Review, string> = { draft: 'To review', flagged: 'Flagged', approved: 'Approved', rejected: 'Rejected' };
 
 /** Every node's path from the board down, and its parent, so a selection can show where it sits. */
 function indexTree(nodes: LibNode[]): Map<string, { node: LibNode; path: string[]; parent: string | null }> {
@@ -127,8 +126,8 @@ function CategoryTree({ nodes, selected, open, onToggle, onPick, total }: {
                 {isOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
               </button>
             : <span className="size-7 shrink-0" aria-hidden />}
-          <button type="button" className={`flex min-w-0 flex-1 items-start justify-between gap-2 py-1.5 pr-2 text-left text-sm ${on ? 'font-medium' : ''}`} aria-current={on ? 'true' : undefined} onClick={() => onPick(n.id)}>
-            <span className="line-clamp-2 break-words">{n.name}</span>
+          <button type="button" className={`flex min-w-0 flex-1 items-center justify-between gap-2 py-1.5 pr-2 text-left text-sm ${on ? 'font-medium' : ''}`} aria-current={on ? 'true' : undefined} onClick={() => onPick(n.id)}>
+            <span className="truncate" title={n.name}>{n.name}</span>
             <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{n.questionCount ?? 0}</span>
           </button>
         </div>
@@ -161,7 +160,7 @@ export function QuestionsPanel() {
   const [pageSize, setPageSize] = React.useState(50);
   const [page, setPage] = React.useState(1);
   const [params] = useSearchParams();
-  const [filters, setFilters] = React.useState({ q: '', nodeId: params.get('topic') ?? params.get('chapter') ?? '', type: 'all', complexity: 'all', status: 'all', asked: 'all', textbook: params.get('textbook') === 'yes' ? 'yes' : 'all', review: ['draft', 'flagged', 'approved', 'rejected'].includes(params.get('review') ?? '') ? params.get('review')! : 'all' });
+  const [filters, setFilters] = React.useState({ q: '', nodeId: params.get('topic') ?? params.get('chapter') ?? '', type: 'all', complexity: 'all', status: 'all', asked: 'all', textbook: ['yes', 'mapped'].includes(params.get('textbook') ?? '') ? params.get('textbook')! : 'all', review: ['draft', 'flagged', 'approved', 'rejected'].includes(params.get('review') ?? '') ? params.get('review')! : 'all' });
   const [counts, setCounts] = React.useState<Counts>({ draft: 0, approved: 0, rejected: 0, flagged: 0 });
   const [picked, setPicked] = React.useState<Set<string>>(new Set());
   const [reviewing, setReviewing] = React.useState(false);
@@ -288,19 +287,10 @@ export function QuestionsPanel() {
     catch (err) { toast.error(err instanceof Error ? err.message : 'Could not delete it.'); }
   }
 
-  // One set of row actions: their own column from sm up, under the question on a phone.
-  const rowActions = (q: Question) => (
-    <>
-      {(q.reviewStatus === 'draft' || q.reviewStatus === 'flagged') && (
-        <Button size="icon" variant="ghost" aria-label="Approve question" title="Approve — makes it live" disabled={reviewing} onClick={() => review([q.id], 'approved')}><Check className="size-4 text-success" /></Button>
-      )}
-      <Button variant="ghost" size="icon" aria-label="Edit question" title="Edit" onClick={() => edit(q)}><Pencil className="size-4" /></Button>
-      <Button variant="ghost" size="icon" aria-label={q.isActive ? 'Hide question' : 'Show question'} title={q.isActive ? 'Hide from new papers' : 'Show in new papers'} onClick={() => toggle(q)}>
-        {q.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-      </Button>
-      <Button variant="ghost" size="icon" aria-label="Delete question" title={q.used ? 'Used by a paper — hide it instead' : 'Delete'} disabled={q.used} onClick={() => remove(q)}><Trash2 className="size-4 text-destructive" /></Button>
-    </>
-  );
+  // The filters that are on, as removable chips; the review tab and search sit apart.
+  const activeFilters = FILTERS.filter((f) => filters[f.key] !== 'all')
+    .map((f) => ({ key: f.key, text: f.options.find(([id]) => id === filters[f.key])?.[1] ?? filters[f.key] }));
+  const clearFilters = () => setFilter(Object.fromEntries(FILTERS.map((f) => [f.key, 'all'])));
 
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const index = React.useMemo(() => indexTree(tree), [tree]);
@@ -318,7 +308,7 @@ export function QuestionsPanel() {
   return (
     <>
       <PanelTop
-        description={`${allCount} question${allCount === 1 ? '' : 's'}${here ? ` in ${here.node.name}` : ''}, each tagged to a topic in Categories.`}
+        description="Every question is tagged to a topic in Categories. Pick a chapter, then open a question to check it."
         actions={<Button onClick={() => { setFormError(null); setForm(blank(startTopic())); }} disabled={topics.length === 0}><Plus className="size-4" /> Add question</Button>}
       />
 
@@ -329,141 +319,171 @@ export function QuestionsPanel() {
             <span className="flex min-w-0 items-center gap-2"><FolderTree className="size-4 shrink-0" /><span className="truncate">{here ? here.path.slice(-2).join(' › ') : 'All questions'}</span></span>
             <ChevronDown className={`size-4 shrink-0 transition-transform ${treeShown ? 'rotate-180' : ''}`} />
           </Button>
-          <div className={`${treeShown ? 'mt-2 block' : 'hidden'} max-h-[60vh] overflow-y-auto rounded-xl border border-border bg-card p-2 lg:sticky lg:top-4 lg:mt-0 lg:block lg:max-h-[calc(100vh-8rem)]`}>
+          <div className={`${treeShown ? 'mt-2 block' : 'hidden'} max-h-[60vh] overflow-y-auto rounded-xl border border-border bg-card p-2 lg:sticky lg:top-20 lg:mt-0 lg:block lg:max-h-[calc(100vh-6rem)]`}>
             <CategoryTree nodes={tree} selected={filters.nodeId} open={open} onToggle={toggleNode} onPick={pickNode} total={allCount} />
           </div>
         </aside>
 
         <div className="min-w-0">
-          {here && (
-            <p className="mb-3 flex flex-wrap items-center gap-1 text-sm text-muted-foreground" aria-label="Where you are">
-              {here.path.map((name, i) => <React.Fragment key={i}>{i > 0 && <ChevronRight className="size-3" aria-hidden />}<span className={i === here.path.length - 1 ? 'font-medium text-foreground' : ''}>{name}</span></React.Fragment>)}
-              <button type="button" aria-label="Show all questions" className="ml-1 rounded p-0.5 hover:text-destructive" onClick={() => pickNode('')}><X className="size-3.5" /></button>
-            </p>
-          )}
-
-          <div className="mb-3 flex flex-wrap gap-1.5" role="tablist" aria-label="Review status">
+          {/* Review status: the one primary switch on this page */}
+          <div className="mb-3 flex gap-5 overflow-x-auto border-b border-border" role="tablist" aria-label="Review status">
             {REVIEW_TABS.map((t) => {
               const n = t.id === 'all' ? allCount : counts[t.id];
               const on = filters.review === t.id;
               return (
-                <Button key={t.id} size="sm" variant={on ? 'default' : 'outline'} role="tab" aria-selected={on} onClick={() => setFilter({ review: t.id })}>
-                  {t.label} <span className="ml-1.5 opacity-70">{n}</span>
-                </Button>
+                <button key={t.id} type="button" role="tab" aria-selected={on} onClick={() => setFilter({ review: t.id })}
+                  className={`-mb-px flex shrink-0 items-center gap-1.5 border-b-2 pb-2 pt-1 text-sm transition-colors ${on ? 'border-primary font-medium text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+                  {t.label}
+                  <span className={`rounded-full px-1.5 text-xs tabular-nums ${on ? 'bg-primary/10 text-primary' : 'bg-muted'}`}>{n}</span>
+                </button>
               );
             })}
           </div>
 
-          <div className="mb-4 space-y-2">
-            <div className="relative">
+          {/* Search, and every other filter behind one button */}
+          <div className="mb-3 flex gap-2">
+            <div className="relative min-w-0 flex-1">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-              <Input className="pl-9" placeholder="Search question text" aria-label="Search question text" value={filters.q} onChange={(e) => setFilter({ q: e.target.value })} />
+              <Input className="pl-9" placeholder="Search questions" aria-label="Search question text" value={filters.q} onChange={(e) => setFilter({ q: e.target.value })} />
             </div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <ChipGroup label="Type" value={filters.type} onChange={(v) => setFilter({ type: v })} options={[['all', 'All'], ...(Object.keys(TYPE_LABEL) as QType[]).map((t) => [t, TYPE_LABEL[t]] as [string, string])]} />
-              <ChipGroup label="Level" value={filters.complexity} onChange={(v) => setFilter({ complexity: v })} options={[['all', 'Any'], ...(Object.keys(COMPLEXITY_LABEL) as Complexity[]).map((c) => [c, COMPLEXITY_LABEL[c]] as [string, string])]} />
-              <ChipGroup label="Board" value={filters.asked} onChange={(v) => setFilter({ asked: v })} options={[['all', 'Any'], ['recent', 'Last 3 years'], ['never', 'Not asked']]} />
-              <ChipGroup label="Source" value={filters.textbook} onChange={(v) => setFilter({ textbook: v })} options={[['all', 'Any'], ['yes', 'Textbook-style']]} />
-              <ChipGroup label="Shown" value={filters.status} onChange={(v) => setFilter({ status: v })} options={[['all', 'All'], ['active', 'Active'], ['hidden', 'Hidden']]} />
-            </div>
-          </div>
-
-      {loadError ? (
-        <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>Could not load questions</AlertTitle><AlertDescription>{loadError}</AlertDescription></Alert>
-      ) : !rows ? (
-        <PageLoading />
-      ) : rows.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-16 text-center text-muted-foreground">
-          <FileQuestion className="size-8" aria-hidden />
-          <p>No questions match. Change the filters or add one.</p>
-        </div>
-      ) : (
-        <>
-          {picked.size > 0 && (
-            <div className="mb-2 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-sm">
-              <span>{picked.size} selected</span>
-              <Button size="sm" disabled={reviewing} onClick={() => review([...picked], 'approved')}><Check className="size-4" /> Approve</Button>
-              <Button size="sm" variant="outline" disabled={reviewing} onClick={() => review([...picked], 'rejected')}><X className="size-4" /> Reject</Button>
-              <Button size="sm" variant="ghost" onClick={() => setPicked(new Set())}>Clear</Button>
-            </div>
-          )}
-          <div className="rounded-xl border border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-8">
-                    <input type="checkbox" aria-label="Select all on this page" checked={rows.length > 0 && picked.size === rows.length}
-                      onChange={(e) => setPicked(e.target.checked ? new Set(rows.map((r) => r.id)) : new Set())} />
-                  </TableHead>
-                  <TableHead>Question</TableHead>
-                  <TableHead className={sidePreview ? 'hidden' : 'hidden 2xl:table-cell'}>Topic</TableHead>
-                  <TableHead className={sidePreview ? 'hidden' : 'hidden sm:table-cell'}>Type</TableHead>
-                  <TableHead>Marks</TableHead>
-                  <TableHead className={`hidden text-right ${sidePreview ? '2xl:table-cell' : 'sm:table-cell'}`}>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((q) => (
-                  <TableRow key={q.id} aria-selected={preview?.id === q.id}
-                    onClick={(e) => { if (!(e.target as HTMLElement).closest('button, input, a')) setPreview(q); }}
-                    className={`cursor-pointer ${q.isActive || q.reviewStatus === 'draft' || q.reviewStatus === 'flagged' ? '' : 'opacity-60'} ${sidePreview && preview?.id === q.id ? 'bg-primary/5 shadow-[inset_3px_0_0_var(--primary)] hover:bg-primary/5' : ''}`}>
-                    <TableCell className="align-top">
-                      <input type="checkbox" aria-label="Select question" checked={picked.has(q.id)}
-                        onChange={(e) => setPicked((s) => { const n = new Set(s); e.target.checked ? n.add(q.id) : n.delete(q.id); return n; })} />
-                    </TableCell>
-                    <TableCell className="min-w-44 align-top">
-                      <button type="button" className="text-left" onClick={() => setPreview(q)} aria-label="Open question">
-                        <p className="line-clamp-2 whitespace-normal text-sm"><MathText text={q.text} /></p>
-                      </button>
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                        {q.source === 'ai' && <Badge variant="outline"><Sparkles className="mr-1 size-3" />AI</Badge>}
-                        {q.textbookRef && <Badge variant="outline" title={q.textbookRef}><BookOpen className="mr-1 size-3" />Textbook</Badge>}
-                        {q.askedIn.length > 0 && <Badge variant="outline" title={`This type asked: ${q.askedIn.join(', ')}`}>{askedLabel(q.askedIn)}</Badge>}
-                        {q.figureSvg && <Badge variant="secondary">Figure</Badge>}
-                        {q.reviewStatus === 'draft' && <Badge variant="secondary">To review</Badge>}
-                        {q.reviewStatus === 'flagged' && <Badge variant="outline" className="text-destructive">Flagged</Badge>}
-                        {q.reviewStatus === 'rejected' && <Badge variant="outline">Rejected</Badge>}
-                      </div>
-                      <div className={`mt-1 flex flex-wrap items-center gap-1.5 ${sidePreview ? '' : 'sm:hidden'}`}>
-                        <Badge variant="outline">{TYPE_LABEL[q.type]}</Badge>
-                        <Badge variant="secondary">{COMPLEXITY_LABEL[q.complexity]}</Badge>
-                      </div>
-                      <div className="-ml-2 mt-1 flex items-center sm:hidden">{rowActions(q)}</div>
-                    </TableCell>
-                    <TableCell className={sidePreview ? 'hidden' : 'hidden align-top text-sm text-muted-foreground 2xl:table-cell'}>{q.topicPath.slice(-2).join(' › ')}</TableCell>
-                    <TableCell className={sidePreview ? 'hidden' : 'hidden align-top sm:table-cell'}>
-                      <div className="flex flex-col items-start gap-1">
-                        <Badge variant="outline">{TYPE_LABEL[q.type]}</Badge>
-                        <span className="text-xs text-muted-foreground">{COMPLEXITY_LABEL[q.complexity]}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="align-top">{q.marks}{!q.isActive && q.reviewStatus === 'approved' && <Badge variant="secondary" className="ml-2">Hidden</Badge>}</TableCell>
-                    <TableCell className={`hidden whitespace-nowrap text-right align-top ${sidePreview ? '2xl:table-cell' : 'sm:table-cell'}`}>
-                      {rowActions(q)}
-                    </TableCell>
-                  </TableRow>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="shrink-0">
+                  <SlidersHorizontal className="size-4" /> <span className="hidden sm:inline">Filters</span>
+                  {activeFilters.length > 0 && <span className="rounded-full bg-primary px-1.5 text-xs tabular-nums text-primary-foreground">{activeFilters.length}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72 space-y-3">
+                {FILTERS.map((f) => (
+                  <label key={f.key} className="block space-y-1">
+                    <span className="text-xs font-medium text-muted-foreground">{f.label}</span>
+                    <Select value={filters[f.key]} onValueChange={(v) => setFilter({ [f.key]: v })}>
+                      <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectContent>{f.options.map(([id, name]) => <SelectItem key={id} value={id}>{name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </label>
                 ))}
-              </TableBody>
-            </Table>
+                {activeFilters.length > 0 && <Button variant="ghost" size="sm" className="w-full" onClick={clearFilters}>Clear filters</Button>}
+              </PopoverContent>
+            </Popover>
           </div>
-          {pages > 1 && (
-            <div className="mt-3 flex items-center justify-between text-sm text-muted-foreground">
-              <span>Page {page} of {pages}</span>
-              <div className="flex gap-1">
-                <Button variant="outline" size="icon" aria-label="Previous page" disabled={page <= 1} onClick={() => setPage(page - 1)}><ChevronLeft className="size-4" /></Button>
-                <Button variant="outline" size="icon" aria-label="Next page" disabled={page >= pages} onClick={() => setPage(page + 1)}><ChevronRight className="size-4" /></Button>
-              </div>
+
+          {/* Only the filters that are on, each removable */}
+          {activeFilters.length > 0 && (
+            <div className="mb-3 flex flex-wrap items-center gap-1.5">
+              {activeFilters.map((f) => (
+                <span key={f.key} className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/50 py-0.5 pl-2.5 pr-1 text-xs">
+                  {f.text}
+                  <button type="button" className="rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label={`Remove filter ${f.text}`} onClick={() => setFilter({ [f.key]: 'all' })}><X className="size-3" /></button>
+                </span>
+              ))}
+              <button type="button" className="px-1 text-xs text-muted-foreground hover:text-foreground" onClick={clearFilters}>Clear all</button>
             </div>
           )}
-        </>
-      )}
 
+          {loadError ? (
+            <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>Could not load questions</AlertTitle><AlertDescription>{loadError}</AlertDescription></Alert>
+          ) : !rows ? (
+            <PageLoading />
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-border bg-card">
+              {/* List header: what is shown, or the bulk actions once something is ticked */}
+              <div className="flex min-h-11 items-center gap-3 border-b border-border bg-muted/40 px-4 py-2 text-sm">
+                <input type="checkbox" aria-label="Select all on this page" disabled={rows.length === 0} checked={rows.length > 0 && picked.size === rows.length}
+                  onChange={(e) => setPicked(e.target.checked ? new Set(rows.map((r) => r.id)) : new Set())} />
+                {picked.size > 0 ? (
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                    <span className="font-medium">{picked.size} selected</span>
+                    <Button size="sm" className="h-7" disabled={reviewing} onClick={() => review([...picked], 'approved')}><Check className="size-4" /> Approve</Button>
+                    <Button size="sm" variant="outline" className="h-7" disabled={reviewing} onClick={() => review([...picked], 'rejected')}><X className="size-4" /> Reject</Button>
+                    <Button size="sm" variant="ghost" className="ml-auto h-7" onClick={() => setPicked(new Set())}>Cancel</Button>
+                  </div>
+                ) : (
+                  <div className="flex min-w-0 flex-1 items-center gap-2 text-muted-foreground">
+                    <span className="truncate">
+                      {total} question{total === 1 ? '' : 's'}
+                      {here && <> in <span className="font-medium text-foreground">{here.node.name}</span></>}
+                    </span>
+                    {here && <button type="button" aria-label="Show all questions" className="rounded p-0.5 hover:text-foreground" onClick={() => pickNode('')}><X className="size-3.5" /></button>}
+                    {pages > 1 && <span className="ml-auto shrink-0 tabular-nums">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)}</span>}
+                  </div>
+                )}
+              </div>
+
+              {rows.length === 0 ? (
+                <div className="flex flex-col items-center gap-2 px-4 py-16 text-center text-sm text-muted-foreground">
+                  <FileQuestion className="size-8" aria-hidden />
+                  <p>No questions here{activeFilters.length || filters.q ? ' with these filters' : ''}.</p>
+                  {(activeFilters.length > 0 || filters.q) && <Button variant="outline" size="sm" onClick={() => { clearFilters(); setFilter({ q: '' }); }}>Clear search and filters</Button>}
+                </div>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {rows.map((q) => {
+                    const on = preview?.id === q.id;
+                    const dim = !q.isActive && q.reviewStatus === 'approved';
+                    const topic = q.topicPath[q.topicPath.length - 1];
+                    return (
+                      <li key={q.id} aria-selected={on}
+                        onClick={(e) => { if (!(e.target as HTMLElement).closest('button, input, a, [role="menuitem"]')) setPreview(q); }}
+                        className={`group flex cursor-pointer gap-3 px-4 py-3 transition-colors ${on ? 'bg-primary/10 shadow-[inset_3px_0_0_var(--primary)]' : 'hover:bg-muted/40'}`}>
+                        <input type="checkbox" className="mt-1 shrink-0" aria-label="Select question" checked={picked.has(q.id)}
+                          onChange={(e) => setPicked((s) => { const n = new Set(s); e.target.checked ? n.add(q.id) : n.delete(q.id); return n; })} />
+                        <div className={`min-w-0 flex-1 ${dim ? 'opacity-60' : ''}`}>
+                          <button type="button" className="block w-full text-left text-sm leading-snug" onClick={() => setPreview(q)} aria-label="Open question">
+                            <span className="line-clamp-2"><MathText text={q.text} /></span>
+                          </button>
+                          <p className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+                            <span>{TYPE_LABEL[q.type]}</span><span aria-hidden>·</span>
+                            <span>{COMPLEXITY_LABEL[q.complexity]}</span>
+                            {here?.node.kind !== 'topic' && <><span aria-hidden>·</span><span className="max-w-[16rem] truncate" title={q.topicPath.slice(-2).join(' › ')}>{topic}</span></>}
+                            {q.textbookRef && <span className="inline-flex items-center gap-1" title={q.textbookRef}><span aria-hidden>·</span><BookOpen className="size-3" />Textbook</span>}
+                            {q.figureSvg && <span className="inline-flex items-center gap-1"><span aria-hidden>·</span><ImageIcon className="size-3" />Figure</span>}
+                            {q.askedIn.length > 0 && <span title={`This type asked: ${q.askedIn.join(', ')}`}><span aria-hidden>· </span>{askedLabel(q.askedIn)}</span>}
+                            {filters.review === 'all' && q.reviewStatus !== 'approved' && <span className={`ml-1 rounded px-1.5 py-px ${q.reviewStatus === 'flagged' ? 'bg-destructive/10 text-destructive' : 'bg-muted text-foreground'}`}>{STATUS_LABEL[q.reviewStatus]}</span>}
+                            {dim && <span className="ml-1 rounded bg-muted px-1.5 py-px text-foreground">Hidden</span>}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-start gap-0.5">
+                          <span className="mr-1 mt-0.5 rounded-md bg-muted px-1.5 py-0.5 text-xs font-medium tabular-nums" title={`${q.marks} mark${q.marks === 1 ? '' : 's'}`}>{q.marks}m</span>
+                          {(q.reviewStatus === 'draft' || q.reviewStatus === 'flagged') && (
+                            <Button size="icon" variant="ghost" className="size-7 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100" aria-label="Approve question" title="Approve — makes it live" disabled={reviewing} onClick={() => review([q.id], 'approved')}><Check className="size-4 text-success" /></Button>
+                          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="icon" variant="ghost" className="size-7" aria-label="More actions"><MoreHorizontal className="size-4" /></Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem onSelect={() => edit(q)}><Pencil className="size-4" /> Edit</DropdownMenuItem>
+                              {q.reviewStatus !== 'rejected' && <DropdownMenuItem onSelect={() => review([q.id], 'rejected')}><X className="size-4" /> Reject</DropdownMenuItem>}
+                              <DropdownMenuItem onSelect={() => toggle(q)}>{q.isActive ? <><EyeOff className="size-4" /> Hide from papers</> : <><Eye className="size-4" /> Show in papers</>}</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem disabled={q.used} className="text-destructive focus:text-destructive" onSelect={() => remove(q)}><Trash2 className="size-4" /> {q.used ? 'Used in a paper' : 'Delete'}</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+
+              {pages > 1 && (
+                <div className="flex items-center justify-between border-t border-border px-4 py-2 text-sm text-muted-foreground">
+                  <span>Page {page} of {pages}</span>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="size-8" aria-label="Previous page" disabled={page <= 1} onClick={() => setPage(page - 1)}><ChevronLeft className="size-4" /></Button>
+                    <Button variant="ghost" size="icon" className="size-8" aria-label="Next page" disabled={page >= pages} onClick={() => setPage(page + 1)}><ChevronRight className="size-4" /></Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Preview panel: a third column on a wide screen. Closing it gives the list the room back. */}
         {sidePreview && preview && (
           <aside aria-label="Question preview" className="fixed inset-y-0 right-0 z-40 w-full max-w-md lg:static lg:z-auto lg:w-auto lg:max-w-none lg:min-w-0">
-            <div className="flex h-full flex-col overflow-hidden border-l border-border bg-card shadow-xl lg:sticky lg:top-4 lg:h-auto lg:max-h-[calc(100vh-8rem)] lg:rounded-xl lg:border lg:shadow-none">
+            <div className="flex h-full flex-col overflow-hidden border-l border-border bg-card shadow-xl lg:sticky lg:top-20 lg:h-auto lg:max-h-[calc(100vh-6rem)] lg:rounded-xl lg:border lg:shadow-none">
               <div className="flex items-start gap-2 border-b border-border px-4 py-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium leading-snug">{preview.topicPath.slice(-2).join(' › ')}</p>

@@ -28,9 +28,9 @@ export const ARITHMETIC_PROGRESSIONS: TextbookQuestion[] = [
   {
     id: 'tb-ap-04', chapter: C, topic: 'Finding n', ref: `${CH} · nth term`,
     type: 'short', complexity: 'easy', marks: 2,
-    text: 'Which term of the AP $7, 13, 19, \\ldots$ is $205$?',
-    answer: '$a = 7$, $d = 6$. $7 + (n-1)6 = 205$ gives $(n-1)6 = 198$, so $n - 1 = 33$ and $n = 34$. The 34th term is 205.',
-    steps: [{ step: 'Writes $7 + (n-1)6 = 205$', marks: 1 }, { step: 'Gets $n = 34$', marks: 1 }],
+    text: 'Which term of the AP $5, 12, 19, \\ldots$ is $194$?',
+    answer: '$a = 5$, $d = 7$. $5 + (n-1)7 = 194$ gives $(n-1)7 = 189$, so $n - 1 = 27$ and $n = 28$. The 28th term is 194.',
+    steps: [{ step: 'Writes $5 + (n-1)7 = 194$', marks: 1 }, { step: 'Gets $n = 28$', marks: 1 }],
   },
   {
     id: 'tb-ap-05', chapter: C, topic: 'Middle terms and conditions for an AP', ref: `${CH} · Arithmetic progressions`,

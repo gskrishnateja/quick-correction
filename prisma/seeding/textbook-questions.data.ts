@@ -21,6 +21,20 @@ import { AREAS_CIRCLES } from './textbook/ch11-areas-circles.js';
 import { SURFACE_AREAS_VOLUMES } from './textbook/ch12-surface-areas-volumes.js';
 import { STATISTICS } from './textbook/ch13-statistics.js';
 import { PROBABILITY } from './textbook/ch14-probability.js';
+import { NCERT_CH01 } from './textbook/ncert/ch01.js';
+import { NCERT_CH02 } from './textbook/ncert/ch02.js';
+import { NCERT_CH03 } from './textbook/ncert/ch03.js';
+import { NCERT_CH04 } from './textbook/ncert/ch04.js';
+import { NCERT_CH05 } from './textbook/ncert/ch05.js';
+import { NCERT_CH06 } from './textbook/ncert/ch06.js';
+import { NCERT_CH07 } from './textbook/ncert/ch07.js';
+import { NCERT_CH08 } from './textbook/ncert/ch08.js';
+import { NCERT_CH09 } from './textbook/ncert/ch09.js';
+import { NCERT_CH10 } from './textbook/ncert/ch10.js';
+import { NCERT_CH11 } from './textbook/ncert/ch11.js';
+import { NCERT_CH12 } from './textbook/ncert/ch12.js';
+import { NCERT_CH13 } from './textbook/ncert/ch13.js';
+import { NCERT_CH14 } from './textbook/ncert/ch14.js';
 
 const CH4 = 'NCERT Class 10 · Ch 4 Quadratic Equations';
 
@@ -152,3 +166,14 @@ export const TEXTBOOK_QUESTIONS: Q[] = [
   ...TRIANGLES, ...COORDINATE_GEOMETRY, ...TRIGONOMETRY, ...CIRCLES, ...AREAS_CIRCLES,
   ...SURFACE_AREAS_VOLUMES, ...STATISTICS, ...PROBABILITY,
 ];
+
+/**
+ * One-to-one set: for each worked example and exercise question in the NCERT
+ * book, one new question on the same skill (own context, numbers and wording),
+ * pointing at the book item it matches ("Same skill as Ex 4.2 Q3").
+ */
+export const NCERT_MATCHED: Q[] = [
+  ...NCERT_CH01, ...NCERT_CH02, ...NCERT_CH03, ...NCERT_CH04, ...NCERT_CH05, ...NCERT_CH06, ...NCERT_CH07, ...NCERT_CH08, ...NCERT_CH09, ...NCERT_CH10, ...NCERT_CH11, ...NCERT_CH12, ...NCERT_CH13, ...NCERT_CH14,
+];
+
+export const ALL_TEXTBOOK_QUESTIONS: Q[] = [...TEXTBOOK_QUESTIONS, ...NCERT_MATCHED];
