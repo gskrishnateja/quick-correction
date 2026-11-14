@@ -1,77 +1,79 @@
 /**
- * /about — a PAGE. AppLayoutRoute supplies the chrome.
- *
- * Deliberately short. An about page earns attention by saying one true thing
- * about what you do and who it is for; the padding most of them carry is why
- * nobody reads them. Replace VALUES and the two paragraphs and you are done.
+ * /about — what Quick Correction is, the problem it solves and how it works
+ * with teachers rather than around them. AppLayoutRoute supplies the chrome.
  */
 import { Link } from 'react-router-dom';
-import { Button, Card, CardContent } from '@bloomneo/uikit';
-import { ArrowRight, Compass, Layers, ShieldCheck } from 'lucide-react';
+import { Button } from '@bloomneo/uikit';
+import { ArrowRight, PenLine, ShieldCheck, Target } from 'lucide-react';
 import { SEO } from '@/shared/SEO';
-import { brand } from '@/shared/brand';
+import { PageHero, InfoCard } from '../components/SitePage';
 
-const VALUES = [
+const PRINCIPLES = [
   {
-    icon: Compass,
-    title: 'Built for one job',
-    body: 'A tool that does one thing predictably beats one that does five things you have to check.',
-  },
-  {
-    icon: Layers,
-    title: 'Boring where it counts',
-    body: 'Familiar patterns in the places people rely on, and novelty only where it earns its keep.',
+    icon: PenLine,
+    title: 'Paper first',
+    body: 'The board exam is written by hand, so practice should be too. Students write on paper; the only screen involved is the parent’s phone camera.',
   },
   {
     icon: ShieldCheck,
-    title: 'Your data stays yours',
-    body: 'Exportable at any time, deleted when you ask, never sold. Stated here so we can be held to it.',
+    title: 'The teacher decides',
+    body: 'AI does the first pass so the teacher doesn’t have to. Every mark can be changed, and nothing is final until the teacher approves it.',
+  },
+  {
+    icon: Target,
+    title: 'A reason for every mark',
+    body: 'A total tells a student how they did. A reason for each question tells them what to do next, which is the part that improves the next score.',
   },
 ];
 
 export default function AboutPage() {
   return (
     <>
-      <SEO title="About" description={`What ${brand.name} is and who it is for`} />
+      <SEO
+        title="About"
+        description="Quick Correction helps teachers and parents run CBSE Class 10 Maths practice tests in the board pattern, with handwritten answers marked question by question and approved by the teacher."
+      />
 
-      <div className="mx-auto max-w-3xl py-8">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          About {brand.name}
-        </h1>
+      <PageHero
+        eyebrow="About us"
+        title={<>More practice tests, <span className="mm-gradient-text">less correcting</span></>}
+        lead="Quick Correction helps teachers and parents run CBSE Class 10 Maths practice tests in the board pattern, and get the answers marked in minutes."
+      />
 
-        <div className="mt-6 space-y-4 text-lg leading-relaxed text-muted-foreground">
-          <p>
-            {brand.name} exists because the work it handles used to take a spreadsheet, three
-            browser tabs and someone remembering to check on Friday.
-          </p>
-          <p>
-            Replace this with the specific problem you solve and who has it. The more concrete
-            the reader can picture it, the less the rest of the page has to do.
-          </p>
-        </div>
+      <div className="mx-auto max-w-3xl space-y-5 text-lg leading-relaxed text-muted-foreground">
+        <p>
+          Students get better at the board exam by writing full papers under exam conditions and
+          learning from their mistakes. The bottleneck is marking. A teacher with three batches
+          spends whole evenings correcting answer sheets, and by the time the marks come back the
+          class has moved on. So fewer tests get set, and the feedback arrives too late to help.
+        </p>
+        <p>
+          Quick Correction takes the marking off the teacher’s desk without taking the teacher out
+          of it. The teacher sets a paper that follows the CBSE pattern, from sections A to E with
+          internal choices. Students write on paper. Parents photograph the pages. Each answer is
+          read, checked against the answer key and marked with a short reason, and the teacher
+          reviews and approves before the marks are final.
+        </p>
+        <p>
+          We started with CBSE Class 10 Mathematics (Standard) because it is the paper most
+          students and parents worry about, and because doing one subject properly beats doing
+          many badly.
+        </p>
+      </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-3">
-          {VALUES.map(({ icon: Icon, title, body }) => (
-            <Card key={title}>
-              <CardContent className="py-5">
-                <span className="grid size-9 place-items-center rounded-lg bg-secondary text-secondary-foreground">
-                  <Icon className="size-4" />
-                </span>
-                <h2 className="mt-3.5 text-sm font-semibold">{title}</h2>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{body}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <div className="mt-14 grid gap-4 sm:grid-cols-3">
+        {PRINCIPLES.map(({ icon, title, body }) => (
+          <InfoCard key={title} icon={icon} title={title}>{body}</InfoCard>
+        ))}
+      </div>
 
-        <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-border pt-8">
-          <Button asChild>
-            <Link to="/contact">Talk to us <ArrowRight className="size-4" /></Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link to="/register">Create an account</Link>
-          </Button>
-        </div>
+      <div className="mx-auto mt-14 flex max-w-3xl flex-wrap items-center justify-center gap-3 border-t border-border pt-8">
+        <Button asChild size="lg" className="h-11 rounded-xl">
+          <Link to="/how-it-works">See how it works <ArrowRight className="size-4" /></Link>
+        </Button>
+        <Button asChild size="lg" variant="outline" className="h-11 rounded-xl">
+          <Link to="/contact">Talk to us</Link>
+        </Button>
       </div>
     </>
   );

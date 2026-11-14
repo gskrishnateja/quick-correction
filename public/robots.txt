@@ -1,0 +1,9 @@
+# Quick Correction — public site pages may be indexed; signed-in areas may not.
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /teacher
+Disallow: /parent
+Disallow: /faculty
+Disallow: /dashboard
+Disallow: /auth

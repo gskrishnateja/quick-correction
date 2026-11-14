@@ -36,6 +36,7 @@ import { Menu, LayoutDashboard, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { brand } from './brand';
 import { LogoMark } from './Logo';
 import { ThemeControls } from './ThemeControls';
+import { SiteFooter } from './SiteFooter';
 import { useAuth } from '@/features/auth/hooks';
 
 function Logo({ className = '' }: { className?: string }) {
@@ -179,36 +180,7 @@ export function AppLayoutRoute() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-border bg-muted/40">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-          {brand.footer.length > 0 && (
-            <div className="mb-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="lg:col-span-2">
-                <Logo />
-                <p className="mt-3 max-w-xs text-sm text-muted-foreground">{brand.tagline}</p>
-              </div>
-              {brand.footer.map((col) => (
-                <div key={col.heading}>
-                  <h2 className="text-sm font-medium">{col.heading}</h2>
-                  <ul className="mt-3 space-y-2">
-                    {col.links.map((l) => (
-                      <li key={l.label}>
-                        <Link to={l.to} className="text-sm text-muted-foreground hover:text-foreground">
-                          {l.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} {brand.name}</span>
-            <span>{brand.tagline}</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter className="bg-muted/30" />
     </div>
   );
 }

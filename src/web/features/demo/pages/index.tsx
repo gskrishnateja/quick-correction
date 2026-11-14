@@ -8,12 +8,15 @@
  */
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, useTheme } from '@bloomneo/uikit';
-import { HeartHandshake, School, ChevronRight, FileText, Camera, Sparkles, Mic, TrendingUp, BellRing, Moon, Sun, LogIn, LogOut, Check, X } from 'lucide-react';
+import { HeartHandshake, School, ChevronRight, FileText, Camera, Sparkles, Mic, TrendingUp, BellRing, Moon, Sun, LogIn, LogOut } from 'lucide-react';
 import { SEO } from '@/shared/SEO';
 import { LogoMark, Wordmark } from '@/shared/Logo';
+import { SiteFooter } from '@/shared/SiteFooter';
 import { useAuth } from '@/features/auth';
 import { homeFor } from '@/features/auth/lib/home';
 import { useDemo, type Role } from '../data/store';
+import { CorrectionAnimation } from '../components/CorrectionAnimation';
+import { FeatureGrid } from '../components/FeatureGrid';
 
 /** Shown as a slowly moving strip of cards under the two doors. */
 const FEATURES = [
@@ -36,60 +39,6 @@ const STEPS = [
   { n: 3, title: 'Marks come back in minutes', text: 'Every question marked with a reason. The teacher checks and approves.' },
 ];
 
-/** A marked paper, drawn in HTML: what a parent sees when marks come back. Sample data. */
-function ResultPreview() {
-  const rows = [
-    { q: 'Q1. Basic proportionality', note: 'Correct.', got: 1, of: 1, ok: true },
-    { q: 'Q2. Areas of similar triangles', note: 'Ratio of areas, not sides. Square the ratio.', got: 0, of: 1, ok: false },
-    { q: 'Q3. Pythagoras theorem', note: 'Clear working, right answer.', got: 2, of: 2, ok: true },
-    { q: 'Q4. Prove the converse', note: 'Last step missing. Partial marks.', got: 2, of: 3, ok: false },
-  ];
-  return (
-    <div className="relative" aria-hidden>
-      <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-primary/10 blur-3xl" />
-      <div className="mm-glass rounded-[28px] p-5 shadow-[0_30px_60px_-30px_rgba(15,23,51,0.45)]">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-lg font-bold tracking-tight">Unit Test 3 · Triangles</p>
-            <p className="text-xs text-muted-foreground">Aarav Sharma · Class 10-A</p>
-          </div>
-          <span className="rounded-full bg-[var(--color-highlight-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--color-highlight-on-soft)]">Faculty checking</span>
-        </div>
-
-        <div className="mm-gradient mm-glow mt-4 flex items-center gap-4 rounded-2xl p-4">
-          <span className="grid size-16 shrink-0 place-items-center rounded-full border-4 border-white/30 text-lg font-bold">77%</span>
-          <span>
-            <span className="block text-3xl font-extrabold tracking-tight">24<span className="text-base font-semibold text-white/75">/31</span></span>
-            <span className="block text-sm text-white/85">Strong on similar triangles. Practise circle proofs next.</span>
-          </span>
-        </div>
-
-        <ul className="mt-4 space-y-2">
-          {rows.map((r) => (
-            <li key={r.q} className="flex items-start gap-3 rounded-2xl bg-card/80 p-3 ring-1 ring-border/60">
-              <span className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-lg ${r.ok ? 'bg-success/15 text-success' : 'bg-destructive/10 text-destructive'}`}>
-                {r.ok ? <Check className="size-3.5" /> : <X className="size-3.5" />}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold">{r.q}</span>
-                <span className="block text-xs text-muted-foreground">{r.note}</span>
-              </span>
-              <span className="text-sm font-semibold tabular-nums">{r.got}/{r.of}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="mm-glass absolute -bottom-12 -left-10 hidden items-center gap-3 rounded-2xl px-4 py-3 shadow-lg xl:flex">
-        <span className="mm-tint grid size-9 place-items-center rounded-xl text-primary"><Camera className="size-[18px]" /></span>
-        <span>
-          <span className="block text-sm font-semibold">4 pages received</span>
-          <span className="block text-xs text-muted-foreground">Marked in 3 minutes</span>
-        </span>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   const { setRole } = useDemo();
   const navigate = useNavigate();
@@ -99,7 +48,7 @@ export default function Home() {
 
   return (
     <>
-      <SEO title="Quick Correction" description="Board-pattern tests, written by hand, marked by AI." />
+      <SEO title="Quick Correction" />
 
       <div className="mm-mesh relative min-h-screen overflow-hidden">
         <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))] lg:max-w-6xl lg:px-8">
@@ -110,9 +59,10 @@ export default function Home() {
             </span>
             <span className="flex items-center gap-1">
             <nav className="mr-3 hidden items-center gap-6 text-sm font-medium text-muted-foreground lg:flex" aria-label="Site">
-              <a href="#features" className="hover:text-foreground">Features</a>
-              <a href="#how" className="hover:text-foreground">How it works</a>
-              <Link to="/about" className="hover:text-foreground">About</Link>
+              <Link to="/how-it-works" className="hover:text-foreground">How it works</Link>
+              <Link to="/teachers" className="hover:text-foreground">For teachers</Link>
+              <Link to="/parents" className="hover:text-foreground">For parents</Link>
+              <Link to="/faq" className="hover:text-foreground">FAQ</Link>
             </nav>
             {!isLoading && (isAuthenticated ? (
               <>
@@ -186,7 +136,7 @@ export default function Home() {
           </div>
 
           <div className="hidden lg:block">
-            <ResultPreview />
+            <CorrectionAnimation />
           </div>
           </div>
 
@@ -216,15 +166,8 @@ export default function Home() {
           <section id="features" className="hidden scroll-mt-8 pt-24 lg:block" aria-labelledby="features-title">
             <p className="text-sm font-semibold text-primary">Features</p>
             <h2 id="features-title" className="mt-2 max-w-xl text-4xl font-bold tracking-[-0.03em]">Everything between the paper and the marks</h2>
-            <ul className="mt-10 grid grid-cols-3 gap-4">
-              {FEATURES.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="mm-glass rounded-3xl p-6 transition hover:-translate-y-0.5">
-                  <span className="mm-tint grid size-11 place-items-center rounded-2xl text-primary"><Icon className="size-5" /></span>
-                  <p className="mt-4 text-base font-semibold">{title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{text}</p>
-                </li>
-              ))}
-            </ul>
+            <p className="mt-3 max-w-2xl text-muted-foreground">From setting the test to knowing what to revise. Here is what each part looks like.</p>
+            <FeatureGrid />
           </section>
 
           <section id="how" className="hidden scroll-mt-8 pt-24 lg:block" aria-labelledby="how-title">
@@ -252,16 +195,10 @@ export default function Home() {
             </div>
           </section>
 
-          <footer className="mt-auto pt-10 text-center text-xs text-muted-foreground lg:mt-20 lg:flex lg:items-center lg:justify-between lg:border-t lg:border-border/70 lg:py-8 lg:text-left">
-            <span>Prototype · sample data · AI marking is simulated</span>
-            <nav className="hidden gap-5 lg:flex" aria-label="Legal">
-              <Link to="/about" className="hover:text-foreground">About</Link>
-              <Link to="/contact" className="hover:text-foreground">Contact</Link>
-              <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-              <Link to="/terms" className="hover:text-foreground">Terms</Link>
-            </nav>
-          </footer>
+
+          <div className="mt-auto" />
         </div>
+        <SiteFooter className="relative mt-10 bg-background/40 backdrop-blur-sm lg:mt-16" />
       </div>
     </>
   );

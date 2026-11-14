@@ -22,11 +22,12 @@ import { Moon, Sun, ArrowLeft } from 'lucide-react';
 import { brand } from './brand';
 import { LogoMark } from './Logo';
 
-/** Replace with a customer quote, a product note, or delete the panel. */
-const PANEL_QUOTE = {
-  text: 'Set up took an afternoon. The part I expected to be hard turned out to already be done.',
-  attribution: 'Early customer',
-};
+/** What a signed-in person gets, in three lines. No testimonials until there are real ones. */
+const PANEL_POINTS = [
+  'Board-pattern CBSE Class 10 Maths papers in a minute',
+  'Handwritten answers marked question by question, with a reason',
+  'The teacher checks and approves every mark',
+];
 
 export function AuthLayoutRoute() {
   const { mode, setMode } = useTheme();
@@ -88,13 +89,17 @@ export function AuthLayoutRoute() {
         </div>
 
         <div className="relative p-10">
-          <span aria-hidden className="mb-5 block size-1.5 rounded-full bg-primary" />
-          <blockquote className="text-lg leading-relaxed text-foreground">
-            {PANEL_QUOTE.text}
-          </blockquote>
-          <figcaption className="mt-4 text-sm text-muted-foreground">
-            {PANEL_QUOTE.attribution}
-          </figcaption>
+          <p className="text-2xl font-semibold leading-snug tracking-tight text-foreground">
+            Practise like the board exam. Get marked in minutes.
+          </p>
+          <ul className="mt-6 space-y-3">
+            {PANEL_POINTS.map((p) => (
+              <li key={p} className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span aria-hidden className="mt-1.5 block size-1.5 shrink-0 rounded-full bg-primary" />
+                {p}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="relative border-t border-border p-10 py-5">
